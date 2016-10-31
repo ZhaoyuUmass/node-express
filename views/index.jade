@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  .container
+    if (!user)
+      a(href="/login") Login
+      br
+      a(href="/register") Register
+    if (user)
+      p.h4 You are currently logged in as #{user.username}.
+      h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
+      h5
+      b.h3 A record
+      br
+      textarea(type="text", id="record", style="height:100px;width:200px;font-size:10pt;")
+      br
+      b.h3 Code
+      br
+      textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
+        function run(value, field, querier) {
+          return value;
+        }
+      br
+      button.btn.btn-default(type='submit', onclick="onClick()") Submit
+      br
+      a(href="/logout") Logout
