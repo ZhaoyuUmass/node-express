@@ -12,7 +12,37 @@ const noop_code = "function run(value, field, querier) {\n  return value;\n}";
 
 
 router.get('/', function (req, res) {
-    res.render('index', { user : req.user });
+    var user = req.user;
+    if(user){
+        var username = user.username;
+        MongoClient.connect(db_url, function(err, db){
+            if(err){
+                return res.render('error', { error: "Cannot connect to db when fetching data."});
+            }else {
+                var collection = db.collection('users');
+                collection.find({username: username}).toArray(function(err, results) {
+                    if(err){
+                        res.render('error', {
+                            message: err.message,
+                            error: err
+                        });
+                    }else{
+                        var code = results[0].code;
+                        var record = results[0].record;
+                        var json = {
+                            user: req.user,
+                            code: code,
+                            record: record
+                        };
+                        res.render('index', json);
+                    }
+                });
+                db.close();
+            }
+        });
+    }else {
+        res.render('index', { user : req.user });
+    }
 });
 
 router.post('/', function (req, res) {
@@ -112,7 +142,7 @@ router.post('/', function (req, res) {
 });
 
 function sendRequestToProxy(json, next){
-
+    /*
     var client = new net.Socket();
     client.connect(9090, '127.0.0.1', function () {
         client.write(JSON.stringify(json)+"\n");
@@ -125,12 +155,13 @@ function sendRequestToProxy(json, next){
         client.destroy(); // kill client after server's response
         next(JSON.parse(data));
     });
-    /*
+
     client.on('close', function () {
         console.log('Connection closed');
         next(null);
     });
     */
+    next({guid: "123"});
 }
 
 router.get('/register', function(req, res) {
@@ -144,6 +175,7 @@ router.post('/register', function(req, res) {
         }
 
         var json = { action:"create", username:req.body.username };
+
         sendRequestToProxy(json, function(data){
             if(data) {
                 MongoClient.connect(db_url, function(err, db){

@@ -7,20 +7,39 @@ block content
       br
       a(href="/register") Register
     if (user)
+      div(class="right")
+        a(href="/logout",) Logout
+      br
       p.h4 You are currently logged in as #{user.username}.
       h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
-      h5
-      b.h3 A record
+      hr
+      div
+        div(class="navigation")
+          p.h4(align="left") Documents
+          ul.h5(href="/") doc1
+          ul.h5(href="/") doc2
+          ul.h5(href="/") doc3
+        div(class="inline-div")
+          p.h4(align="left") A record
+          br
+          textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+            #{record}
+          p.h5 IPv4 address. Enter multiple addresses on separate lines.
+          ul.h5 Example:
+          ul.h6 192.0.2.23
+          ul.h6 198.51.100.234
+
+        div(class="inline-div")
+          p.h4(align="center") Code
+          br
+          textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
+            #{code}
+          br
+          select(class="optgroup") Examples
+            option.h5 No-op
+            option.h5 Round-robin
+            option.h5 Latency-based
       br
-      textarea(type="text", id="record", style="height:100px;width:200px;font-size:10pt;")
-      br
-      b.h3 Code
-      br
-      textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
-        function run(value, field, querier) {
-          return value;
-        }
-      br
-      button.btn.btn-default(type='submit', onclick="onClick()") Submit
-      br
-      a(href="/logout") Logout
+      div
+        button.btn.btn-default(type='submit', onclick="onClick()") Submit
+

@@ -8,5 +8,4 @@ function onClick() {
         window.alert(result);
         $("h5").text(result);
     });
-
 }

@@ -6,3 +6,38 @@ body {
 a {
   color: #00B7FF;
 }
+
+ul {
+   list-style-type: none;
+}
+
+.navigation {
+  display:inline-block;
+  float: left;
+  padding: 10px;
+}
+
+.inline-div {
+  display:inline-block;
+  float: left;
+  padding: 30px;
+  border-left: 1px solid #000000;
+  white-space: pre;
+}
+
+hr {
+  border: none;
+  height: 4px;
+  /* Set the hr color */
+  color: #333; /* old IE */
+  background-color: #333; /* Modern Browsers */
+}
+
+.right {
+  text-align: right;
+  float: right;
+}
+
+.optgroup {
+  font-size:14px;
+}
