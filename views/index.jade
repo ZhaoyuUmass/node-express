@@ -12,6 +12,7 @@ block content
       br
       p.h4 You are currently logged in as #{user.username}.
       h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
+      h6
       hr
       div
         div(class="navigation")
@@ -26,8 +27,9 @@ block content
             #{record}
           p.h5 IPv4 address. Enter multiple addresses on separate lines.
           ul.h5 Example:
-          ul.h6 192.0.2.23
-          ul.h6 198.51.100.234
+          ul.h5 192.0.2.23
+          ul.h5 198.51.100.234
+          button.btn.btn-default(type='submit', onclick="onRecordClick()") Submit Record
 
         div(class="inline-div")
           p.h4(align="center") Code
@@ -35,11 +37,11 @@ block content
           textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
             #{code}
           br
-          select(class="optgroup") Examples
-            option.h5 No-op
-            option.h5 Round-robin
-            option.h5 Latency-based
-      br
-      div
-        button.btn.btn-default(type='submit', onclick="onClick()") Submit
-
+          p.h5 Examples:
+          select(id="codeExamples", class="optgroup", onchange="onChange();") Examples
+            option.h5(value="noop" selected) No-op
+            option.h5(value="random") Random
+            option.h5(value="latency") Latency-based
+          br
+          br
+          button.btn.btn-default(type='submit', onclick="onCodeClick()") Submit Code

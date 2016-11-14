@@ -8,8 +8,10 @@ var MongoClient = mongodb.MongoClient;
 
 var db_url = 'mongodb://localhost:27017/passport_local_mongoose_express4';
 
-const noop_code = "function run(value, field, querier) {\n  return value;\n}";
-
+const UPDATE_CODE = "update_code",
+    UPDATE_RECORD = "update_record",
+    REMOVE_CODE = "remove_code",
+    DELETE_RECORD = "delete_record";
 
 router.get('/', function (req, res) {
     var user = req.user;
@@ -46,25 +48,11 @@ router.get('/', function (req, res) {
 });
 
 router.post('/', function (req, res) {
-    // console.log("Receive:"+req.user.username+" updates record "+req.body.record+" and code:\n"+req.body.code);
-    var action = null,
+    var query = req.body.action,
+        username = req.user.username,
+        action = null,
         record = req.body.record,
-        code = req.body.code,
-        username = req.user.username;
-    if(record.localeCompare("") == 0 && code.localeCompare("") != 0){
-        res.send("Can not remove A record with code deployed, please remove your code first or remove both of them together.");
-        return;
-    }
-
-    if(record.localeCompare("")==0){
-        // delete means delete the record
-        action = "delete";
-    }else if (code.localeCompare("")==0){
-        // remove means remove the code
-        action = "remove";
-    }else{
-        action = "update";
-    }
+        code = req.body.code;
 
     // Fetch the record from db first
     MongoClient.connect(db_url, function(err, db){
@@ -86,24 +74,42 @@ router.post('/', function (req, res) {
                     db.close();
                 }else {
                     var guid = results[0].guid;
+                    var currentCode = results[0].code;
+                    var currentRecord = results[0].record;
                     var toUpdate = true;
+
                     // now let's check whether it's necessary to update
-                    if (action.localeCompare("update") == 0) {
-                        var currentCode = results[0].code;
-                        var currentRecord = results[0].record;
-                        if (currentCode.localeCompare(code) == 0 && currentRecord.localeCompare(record) == 0) {
-                            toUpdate = false;
-                        }
+                    switch(query) {
+                        case "code":
+                            // currentCode != code, then it needs to update
+                            record = currentRecord;
+                            if (currentCode.localeCompare(code) != 0) {
+                                if (code.localeCompare("") == 0) {
+                                    action = REMOVE_CODE;
+                                } else {
+                                    action = UPDATE_CODE;
+                                }
+                            } else {
+                                toUpdate = false;
+                            }
+                            break;
+                        case "record":
+                            code = currentCode;
+                            if (currentRecord.localeCompare(record) != 0) {
+                                if (record.localeCompare("") == 0) {
+                                    action = DELETE_RECORD;
+                                } else {
+                                    action = UPDATE_RECORD;
+                                }
+                            } else{
+                                toUpdate = false;
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    if (action.localeCompare("remove") == 0){
-                        var currentCode = results[0].code;
-                        var currentRecord = results[0].record;
-                        if(currentCode.localeCompare("") == 0 && currentRecord.localeCompare(record) == 0) {
-                            toUpdate = false;
-                        }else if(currentCode.localeCompare("") == 0 && currentRecord.localeCompare(record) != 0){
-                            action = "update";
-                        }
-                    }
+
+
                     if (toUpdate) {
                         var json = {
                             action: action,
@@ -117,7 +123,6 @@ router.post('/', function (req, res) {
 
                         sendRequestToProxy(json, function (data) {
                             if (data) {
-                                console.log();
                                 collection.update(
                                     {username: req.user.username},
                                     json
@@ -129,7 +134,7 @@ router.post('/', function (req, res) {
                             db.close();
                         });
                     } else {
-                        res.send("No record needs to be updated for " + req.user.username + ".activegns.org");
+                        res.send("No need to update for " + req.user.username + ".activegns.org");
                     }
                 }
 
@@ -142,7 +147,7 @@ router.post('/', function (req, res) {
 });
 
 function sendRequestToProxy(json, next){
-    /*
+
     var client = new net.Socket();
     client.connect(9090, '127.0.0.1', function () {
         client.write(JSON.stringify(json)+"\n");
@@ -155,13 +160,12 @@ function sendRequestToProxy(json, next){
         client.destroy(); // kill client after server's response
         next(JSON.parse(data));
     });
-
+    /*
     client.on('close', function () {
         console.log('Connection closed');
         next(null);
     });
     */
-    next({guid: "123"});
 }
 
 router.get('/register', function(req, res) {
