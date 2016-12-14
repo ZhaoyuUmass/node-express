@@ -10,8 +10,13 @@ const code = "function run(value, field, querier) {\n\
 const value = "{}"
 
 
-router.get('/', function(req, res){
-    res.status(200).send("pong!");
+router.get('/test', function(req, res){
+    res.render('test');
+});
+
+
+router.post('/test', function(req, res){
+    var code = req.code;
 
     const ls = spawn('java', ['-cp', 'debugger.jar', 'edu.umass.cs.activecode.ActiveRunner', code, value, value, ""]);
 
@@ -27,5 +32,6 @@ router.get('/', function(req, res){
         console.log("child process exited with code "+code)
     });
 });
+
 
 module.exports = router;

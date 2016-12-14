@@ -17,6 +17,20 @@ function onRecordClick() {
     });
 }
 
+function onTestClick() {
+    var code = $("#code").val();
+    var accessor = $("#accessor").val();
+    var value = $("#value").val();
+    var qvalue = $("#qvalue").val();
+
+    window.alert("It's "+value);
+}
+
+function adjust_textarea(h) {
+    h.style.height = "20px";
+    h.style.height = (h.scrollHeight)+"px";
+}
+
 const noop_code = "function run(value, field, querier) {\n\
     return value;\n\
 }";
