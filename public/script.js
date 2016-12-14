@@ -22,7 +22,7 @@ const noop_code = "function run(value, field, querier) {\n\
 }";
 
 const random_code = 'function run(value, field, querier) {\n\
-    var a = value.get("A");\n\
+    var a = value["A"];\n\
     var records = a.get("record");\n\
     var rand = records.get(Math.ceil(Math.random()*records.length())-1);\n\
     var length = records.length();\n\
