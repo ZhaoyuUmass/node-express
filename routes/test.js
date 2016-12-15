@@ -4,34 +4,46 @@
 var express = require('express');
 var router = express.Router();
 const spawn = require('child_process').spawn;
-const code = "function run(value, field, querier) {\n\
-    return value;\n\
-}";
-const value = "{}"
 
-
-router.get('/test', function(req, res){
-    res.render('test');
+router.get('/', function(req, resp){
+    resp.render('test');
 });
 
 
-router.post('/test', function(req, res){
-    var code = req.code;
+router.post('/', function(req, resp){
+    var code = req.body.code;
+    var value = req.body.value;
+    var qvalue = req.body.qvalue;
+    var accessor = req.body.accessor;
+    console.log("code:"+code+",value:"+value+",qvalue:"+qvalue+",accessor:"+accessor);
+    var err = "";
+    var result = "";
 
-    const ls = spawn('java', ['-cp', 'debugger.jar', 'edu.umass.cs.activecode.ActiveRunner', code, value, value, ""]);
+    var proc = spawn('java', ['-cp', 'debugger.jar', 'edu.umass.cs.activecode.ActiveRunner', code, value, qvalue, accessor]);
 
-    ls.stdout.on('data', function(data) {
-        console.log("stdout: "+data);
+    proc.stdout.on('data', function(data) {
+        console.log(data+"");
+        result = result.concat(data);
     });
 
-    ls.stderr.on('data', function(data) {
-        console.log("stderr:"+ data );
+    proc.stderr.on('data', function(data) {
+        console.log(data+"");
+        err = err.concat(data);
     });
 
-    ls.on('close', function(code) {
-        console.log("child process exited with code "+code)
+    proc.on('close', function(code) {
+        if(err.localeCompare("") == 0){
+            var arr = result.split("\n");
+            value = arr[0];
+            qvalue = arr[1];
+            var json = JSON.stringify({err:err, value:value, qvalue:qvalue});
+            resp.status(200).send(json)
+        }else{
+            var json = JSON.stringify({err:err, value:value, qvalue:qvalue});
+            resp.status(200).send(json);
+        }
     });
+
 });
-
 
 module.exports = router;

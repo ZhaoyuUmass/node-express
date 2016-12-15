@@ -65,7 +65,7 @@ hr {
 }
 
 .form-style-7{
-  margin:50px auto;
+  margin:20px auto;
   background:#fff;
   border-radius:2px;
   padding:20px;
@@ -80,8 +80,8 @@ hr {
 }
 .form-style-7 ul{
   list-style:none;
-  padding:0;
-  margin:0;
+  padding:10px;
+  margin:10px;
 }
 .form-style-7 li{
   display: block;
@@ -94,9 +94,9 @@ hr {
 .form-style-7 li > label{
   display: block;
   float: left;
-  margin-top: -19px;
+  margin-top: -10px;
   background: #FFFFFF;
-  height: 14px;
+  height: 20px;
   padding: 2px 5px 2px 5px;
   color: #B9B9B9;
   font-size: 12px;
@@ -122,7 +122,7 @@ hr {
   display: block;
   outline: none;
   border: none;
-  height: 25px;
+  height: 80px;
   line-height: 25px;
   font-size: 16px;
   padding: 0;

@@ -9,26 +9,33 @@ block content
       ul
         li(style="float:left;")
           a(href="/") Test Your Active Code
-    ul(style="columns:2")
-        form(class="form-style-7")
-          ul
-            li
-                label() Value(JSON)
-                input(type="text" id="value")
-                span The json value passed into function 'run'
-            li
-                label Querier Value(JSON)
-                input(type="text" id="qvalue")
-                span The json value passed into querier
-            li
-                label Accessor (String)
-                input(type="text" id="accessor")
-                span Accessor GUID
-        form(class="form-style-7")
-          ul
-            li
-                label Active Code(Javascript)
-                textarea(id="code",onkeyup="adjust_textarea(this)").
-                  #{code}
-                span function 'run(value, accessor, querier)' must be implemented
-            button.btn.btn-default(type='submit' onclick="onTestClick()" style="float: right;") Run
+
+    div(class="form-style-7")
+      ul(style="columns:3")
+        li
+          label Value(JSON)
+          textarea(type="text" id="value").
+            #{value}
+          span The json value passed into function 'run'
+        li
+          label Querier Value(JSON)
+          textarea(type="text" id="qvalue").
+            #{qvalue}
+          span The json value passed into querier
+        li
+          label Accessor (String)
+          textarea(type="text" id="accessor").
+            #{accessor}
+          span Accessor GUID
+      ul(style="columns:2")
+        li
+            label Active Code(Javascript)
+            textarea(id="code" style="height:200px").
+              #{code}
+            span function 'run(value, accessor, querier)' must be implemented
+        li
+            label Error Output
+            textarea(id="err" style="height:200px;background-color:black;font-size:12px;color:red").
+              #{err}
+            span returned error after executing your code
+      button.btn.btn-default(type='submit' onclick="onTestClick()" style="float:right;width:20em;height:2em;background-color:#4CAF50;border:none;font-size:16px;") Run

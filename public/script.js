@@ -22,8 +22,27 @@ function onTestClick() {
     var accessor = $("#accessor").val();
     var value = $("#value").val();
     var qvalue = $("#qvalue").val();
+    if(value.localeCompare("")==0)
+        value = "{}";
+    if(qvalue.localeCompare("")==0)
+        qvalue = "{}";
+    if(code.localeCompare("")==0){
+        window.alert("Please enter your code!");
+        return;
+    }
 
-    window.alert("It's "+value);
+    $.post("/test", {code: code, value: value, qvalue: qvalue, accessor: accessor},
+       function(data){
+            alert(data);
+            var json = JSON.parse(data);
+            var value = json["value"];
+            var qvalue = json["qvalue"];
+            var err = json["err"];
+            $("#value").val(value);
+            $("#qvalue").val(qvalue);
+            $("#err").val(err);
+       }
+    );
 }
 
 function adjust_textarea(h) {
