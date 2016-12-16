@@ -1,3 +1,20 @@
 //
    Created by gaozy on 12/15/16.
 
+extends simple
+
+block content
+    .container
+        div(class="nav")
+            ul
+                li(style="float:right")
+                    a(href="/register") Register
+                li(style="float:right")
+                    a(href="/login") Login
+                li(class="ddown")
+                    a(href="#" class="dropbtn") Document
+                    div(class="ddown-content")
+                        a(href="#") About ActiveGNS
+                        a(href="#") How-To Guide
+                        a(href="#") API Reference
+        h1 ActiveGNS: A programmable managed DNS service

@@ -1,4 +1,4 @@
-extends layout
+extends simple
 
 block content
   .container
@@ -10,9 +10,10 @@ block content
           input.form-control(type='text', name="username", placeholder='Enter Username')
       .form-group
         input.form-control(type='password', name="password", placeholder='Password')
-      button.btn.btn-default(type='submit') Submit
-      &nbsp
-      a(href='/')
-        button.btn.btn-primary(type="button") Cancel
+      span(style="padding:1%")
+        button.btn.btn-default(type='submit') Submit
+      span(style="padding:1%")
+        a(href='/')
+          button.btn.btn-primary(type="button") Cancel
 
     h5 The username will be the name of your subdomain.
