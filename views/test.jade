@@ -1,41 +1,46 @@
 //
    Created by gaozy on 12/14/16.
-
 extends layout
 
 block content
-  .container
-    div(class="nav")
-      ul
-        li(style="float:left;")
-          a(href="/") Test Your Active Code
+    .container
+        div(class="nav")
+            ul
+                li(style="float:left;")
+                    a(href="/") Test Your Active Code
 
-    div(class="form-style-7")
-      ul(style="columns:3")
-        li
-          label Value(JSON)
-          textarea(type="text" id="value").
-            #{value}
-          span The json value passed into function 'run'
-        li
-          label Querier Value(JSON)
-          textarea(type="text" id="qvalue").
-            #{qvalue}
-          span The json value passed into querier
-        li
-          label Accessor (String)
-          textarea(type="text" id="accessor").
-            #{accessor}
-          span Accessor GUID
-      ul(style="columns:2")
-        li
-            label Active Code(Javascript)
-            textarea(id="code" style="height:200px").
-              #{code}
-            span function 'run(value, accessor, querier)' must be implemented
-        li
-            label Error Output
-            textarea(id="err" style="height:200px;background-color:black;font-size:12px;color:red").
-              #{err}
-            span returned error after executing your code
-      button.btn.btn-default(type='submit' onclick="onTestClick()" style="float:right;width:20em;height:2em;background-color:#4CAF50;border:none;font-size:16px;") Run
+        div(class="form-style-7")
+            ul(style="columns:3")
+                li
+                    label Value(JSON)
+                    textarea(type="text" id="value").
+                        #{value}
+                    span The json value passed into function 'run'
+                li
+                    label Querier Value(JSON)
+                    textarea(type="text" id="qvalue").
+                        #{qvalue}
+                    span The json value passed into querier
+                li
+                    label Accessor (String)
+                    textarea(type="text" id="accessor").
+                        #{accessor}
+                    span Accessor GUID
+            div
+                span(style="float:left;padding: 1%")
+                    label Active Code(Javascript)
+                    textarea(id="code").
+                        #{code}
+                span(style="float:right;padding: 2%")
+                    label Error Output
+                    textarea(id="err" style="height:240px;width:350px;background-color:black;font-size:12px;color:red;").
+                        #{err}
+                    br
+                    button.btn.btn-default(type='submit' onclick="onTestClick()" style="width:20em;height:2em;background-color:#4CAF50;border:none;font-size:16px;") Run
+        script.
+            var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+                lineNumbers: true,
+                matchBrackets: true,
+                continueComments: "Enter",
+                extraKeys: {"Ctrl-Q": "toggleComment"}
+            });

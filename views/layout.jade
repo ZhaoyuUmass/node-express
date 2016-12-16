@@ -4,10 +4,16 @@ html
     title= title
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css', rel='stylesheet', media='screen')
-    script(src='http://code.jquery.com/jquery.js')
-    script(src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
-    script(type="text/javascript", src='script.js')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="stylesheet" href="lib/codemirror.css")
+    script(type="text/javascript", src="lib/codemirror.js")
+    script(type="text/javascript", src="lib/comment.js")
+    script(type="text/javascript", src="lib/continuecomment.js")
+    script(type="text/javascript", src="lib/matchBrackets.js")
+    script(type="text/javascript", src="lib/javascript.js")
+    script(type="text/javascript", src='http://code.jquery.com/jquery.js')
+    script(type="text/javascript", src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
+    script(type="text/javascript", src='script.js')
   body
     if (error && error.length > 0)
       br

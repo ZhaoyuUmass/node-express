@@ -2,7 +2,7 @@
  * Created by gaozy on 10/18/16.
  */
 function onCodeClick() {
-    var code = $("#code").val();
+    var code = editor.getValue(); //$("#code").val();
     $.post( "/", { code: code, action: "code"}, function(result){
         window.alert(result);
         $("h6").text(result);
@@ -18,7 +18,7 @@ function onRecordClick() {
 }
 
 function onTestClick() {
-    var code = $("#code").val();
+    var code = editor.getValue(); //$("#code").val();
     var accessor = $("#accessor").val();
     var value = $("#value").val();
     var qvalue = $("#qvalue").val();
@@ -45,11 +45,6 @@ function onTestClick() {
     );
 }
 
-function adjust_textarea(h) {
-    h.style.height = "20px";
-    h.style.height = (h.scrollHeight)+"px";
-}
-
 const noop_code = "function run(value, field, querier) {\n\
     return value;\n\
 }";
@@ -73,13 +68,13 @@ function onChange(){
     var chosen = $("#codeExamples").val();
     switch(chosen){
         case "noop":
-            $("#code").val(noop_code);
+            editor.setValue(noop_code);
             break;
         case "random":
-            $("#code").val(random_code);
+            editor.setValue(random_code);
             break;
         case "latency":
-            $("#code").val(latency_code);
+            editor.setValue(latency_code);
             break;
         default:
             break;
