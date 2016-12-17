@@ -1,23 +1,22 @@
 /**
  * Created by gaozy on 12/16/16.
  */
-/**
- * Created by gaozy on 12/13/16.
- */
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function(req, resp){
-    var query = req.query;
+router.get('/:page', function(req, resp){
+    var query = req.params.page;
     switch(query){
-        case "":
+        case "activecode":
+            resp.render('activecode');
             break;
-        case "":
+        case "activegns":
+            resp.render('activegns');
             break;
         default:
+            resp.render('activegns');
             break;
     }
-    resp.render('active_code_document');
 });
 
 module.exports = router;

@@ -1,0 +1,63 @@
+//
+   Created by gaozy on 12/15/16.
+
+extends simple
+
+block content
+    .container
+        div(class="nav")
+            ul
+                li(style="float:right")
+                    a(href="/register") Register
+                li(style="float:right")
+                    a(href="/login") Login
+                li(class="ddown")
+                    a(href="#" class="dropbtn") Document
+                    div(class="ddown-content")
+                        a(href="#") About ActiveGNS
+                        a(href="#") How-To Guide
+                        a(href="#") API Reference
+        h1 ActiveGNS: A programmable managed DNS service
+        hr
+        br
+
+        h3 Q1.What is ActiveGNS
+        p.
+            ActiveGNS is a programmable managed DNS service that allows you to write your own code to control the DNS response
+            for your domain name.
+        p
+            |Similar with other managed DNS services, such as
+            a(href="https://aws.amazon.com/route53/")
+                font(color="red")  Amazon Route 53,
+            a(href="http://dyn.com/dns/")
+                font(color="blue") DynDNS,
+            a(href="http://www.dnsmadeeasy.com/")
+                font(color="green") DNSMadeEasy,
+            |you could set up your A record with multiple IPv4 addresses.
+        p.
+            Besides, you could also write your own code (in Javascript) to control the DNS response for your domain.
+
+        h3 Q2.Why programmability?
+        p.
+            Writing your own code to control your DNS response gives you more freedom than a configurable scheme.
+        p
+            |For example, with a
+            font(color="red")  configurable
+            |  managed DNS service, you could choose a high-level routing policy such as weighted, and geolocation, see
+            a(href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html")  examples of Route 53
+            |  for more information.
+        p
+            | While, with our
+            font(color="red") programmable
+            |  managed DNS service, you could specify a more sophisticated routing policy to improve your service performance or save your cost. See
+            a(href="#")  more examples
+            |  of active code.
+        h3 Q3.How it works?
+        p.
+            As shown in the figure, our DNS server serves all DNS requests for the domain name ends with "activegns.org".
+        ul
+            li The DNS request is first translated to a GNS request.
+            li GNS fetch your A record and code from DB then run the code on ActiveGNS.
+            li After executing the code, the response is sent back through the DNS server.
+
+        img(src="../images/arch.png", style="width:50%;height:50%;")
