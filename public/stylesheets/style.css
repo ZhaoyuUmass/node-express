@@ -209,6 +209,7 @@ hr {
 }
 
 .example .CodeMirror {
-  border: 1px solid #eee;
+  border: none;
   height: auto;
+  width: auto;
 }

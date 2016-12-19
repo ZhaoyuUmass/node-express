@@ -17,5 +17,73 @@ block content
                         a(href="/doc/activegns") About ActiveGNS
                         a(href="/doc/activecode") How-To Guide
                         a(href="/doc/activequery") API Reference
+        h1 Querier API Interface
+            hr
+            br
+        div(style="font-family: 'Raleway',sans-serif; padding:5px;font-size: 18px; font-weight: 500;")
+            p
+                |This document contains information on active code querier interface for customer code to interact with ActiveGNS.
+                | ActiveGNS allows its customer code to access the fields of other GUIDs as long as the customer's GUID has the
+                | permission to access the field. GNS uses ACL(Access Control List) to prevent unauthorized access to customer's field.
+                | To understand the details about ACL, please refer to
+                a(href="https://en.wikipedia.org/wiki/Access_control_list")  access control list.
 
-        
+            h3(style="font-weight: 800;") Why we need active code querier?
+            p
+                | As we have shown in
+                a(href="/doc/activecode")  How-To Guide
+                |  when a piece of active code runs, two JSON collections(value and accessor) need to be passed into it.
+                | But what if the code needs more information than the value and accessor being passed into the function?
+                | We provide a simple way to let customer code get more information from outside, i.e., the third parameter,
+                i  querier,
+                | being passed into the run() function serves on this purpose.
+            h3(style="font-weight: 800;") Interfaces
+            p Querier is an object being implemented in Java, we have following interfaces exposed to customer code:
+            div(class="example")
+                ul(style="list-style: none;")
+                    li
+                        textarea(readonly=true id="code1").
+                            1. JSON readGuid(String guid, String field) throws Exception;
+                        | This interface allows customer's active code to read the value of field from guid.
+                        | The parameter guid could be the same as customer's own GUID,
+                        | and it does not require any ACL check to read the value of field.
+                        | If guid is different from the customer's own GUID,
+                        | the customer must make sure he is permitted to read the field of guid.
+                        | Otherwise, he will get an exception to indicate that the read operation is not allowed.
+                        p.
+                            It is a blocking call and it returns a JSON as a key-value pair like {field:value}.
+                    li
+                        textarea(readonly=true id="code2").
+                            2. void writeGuid(String guid, String field, Object value) throws Exception;
+                        | This interface allows customer's code to write value into field of guid.
+                        | If the parameter guid is the same as customer's own GUID, there is no need for ACL check, and the field will be updated.
+                        | If guid is different from the customer's own GUID, the customer must make sure he is permitted to write into the field of GUID.
+                        | Otherwise, he will get an exception to indicate that the write operation is not allowed.
+                        p.
+                            It is a blocking call, and has no return value. No exception means the update operation succeeds.
+                    li
+                        textarea(readonly=true id="code3").
+                            3. JSON getLocations(Array ipList) throws Exception;
+                        | This interface allows customer's active code to get a city-level location information of a list of
+                        | IP addresses. The input is a Javascript Array with all queried IP addresses, e.g., [ip1, ip2, ...].
+                        | The interface returns a JSON collection with each IP address in the input and its latitude, longitude values,
+                        p.
+                            {
+                                ip1:{"latitude":lat1, "longitude":lng1},
+                                ip2:{"latitude":lat2, "longitude":lng2},
+                                ...
+                            }
+                        | We integrate GeoIP into our implementation and resolve the location of each IP address in the
+                        | best effort manner, i.e, we will put the latitude-longitude value for each IP address that can
+                        | be resolved with GeoIP.
+                        | If the list contains invalid IP addresses, it will throw an exception to indicate that the query is invalid.
+
+
+        script.
+            function editor(id) {
+                CodeMirror.fromTextArea(document.getElementById(id), {
+                });
+            }
+            editor('code1');
+            editor('code2');
+            editor('code3');
