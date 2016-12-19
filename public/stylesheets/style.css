@@ -27,7 +27,7 @@
 }
 
 .nav li a:hover, .ddown:hover .dropbtn {
-  background-color: #05ecee;
+  background-color: #7dd8ff;
 }
 
 .nav li.ddown {
@@ -37,7 +37,7 @@
 .nav .ddown-content {
   display: none;
   position: absolute;
-  background-color: #05ecee;
+  background-color: #7dd8ff;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(125, 216, 255, 0.2);
 }
