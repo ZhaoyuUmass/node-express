@@ -14,30 +14,40 @@ block content
                 li(class="ddown")
                     a(href="#" class="dropbtn") Document
                     div(class="ddown-content")
-                        a(href="#") About ActiveGNS
-                        a(href="#") How-To Guide
-                        a(href="#") API Reference
+                        a(href="/doc/activegns") About ActiveGNS
+                        a(href="/doc/activecode") How-To Guide
+                        a(href="/doc/activequery") API Reference
         h1 ActiveGNS: A programmable managed DNS service
         hr
         br
         div(style="font-family: 'Raleway',sans-serif; padding:5px;")
-            h3 Q1.What is ActiveGNS
+            h3 Q1.What is DNS?
             p.
-                ActiveGNS is a programmable managed DNS service that allows you to write your own code to control the DNS response
-                for your domain name.
+                DNS serves as the “phone book” for the Internet: it maps domain names like activegns.org,
+                to a numeric Internet Protocol (IP) addresses like 52.37.209.19.
+                Every device that sends or receives data on the Internet has a unique IP address,
+                which the Internet’s routing software and hardware use to identify and locate the device.
+                DNS is what makes it possible for users to access a website by human-readable name,
+                which is easier for most people to remember than a numeric string in an IP address.
+            h3 Q2.What is ActiveGNS?
+            p.
+                ActiveGNS is a programmable managed DNS service that allows you to write your own code
+                to control the DNS response for your domain name.
             p
-                |Similar with other managed DNS services, such as
+                |Similar to the other managed DNS services, such as
                 a(href="https://aws.amazon.com/route53/")
                     font(color="red")  Amazon Route 53,
                 a(href="http://dyn.com/dns/")
                     font(color="blue") DynDNS,
                 a(href="http://www.dnsmadeeasy.com/")
-                    font(color="green") DNSMadeEasy,
-                |you could set up your A record with multiple IPv4 addresses.
-            p.
-                Besides, you could also write your own code (in Javascript) to control the DNS response for your domain.
+                    font(color="green") DNSMadeEasy
+                | ,you could set up your A record with multiple IPv4 addresses.
+            p
+                | Besides, you could also write your own code (in Javascript) to control the DNS response for your domain. See
+                a(href="/doc/activecode")  how
+                |  with ActiveGNS.
 
-            h3 Q2.Why programmability?
+            h3 Q3.Why programmability?
             p.
                 Writing your own code to control your DNS response gives you more freedom than a configurable scheme.
             p
@@ -52,7 +62,7 @@ block content
                 |  managed DNS service, you could specify a more sophisticated routing policy to improve your service performance or save your cost. See
                 a(href="#")  more examples
                 |  of active code.
-            h3 Q3.How it works?
+            h3 Q4.How it works?
             p.
                 As shown in the figure, our DNS server serves all DNS requests for the domain name ends with "activegns.org".
             ul

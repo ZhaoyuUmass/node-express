@@ -207,3 +207,8 @@ hr {
   width: 600px;
   height: 240px;
 }
+
+.example .CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
+}

@@ -13,6 +13,9 @@ router.get('/:page', function(req, resp){
         case "activegns":
             resp.render('activegns');
             break;
+        case "activequery":
+            resp.render('activequery');
+            break;
         default:
             resp.render('activegns');
             break;

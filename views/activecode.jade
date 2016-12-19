@@ -1,7 +1,7 @@
 //
    Created by gaozy on 12/16/16.
 
-extends layout
+extends doc
 
 block content
     .container
@@ -14,13 +14,83 @@ block content
                 li(class="ddown")
                     a(href="#" class="dropbtn") Document
                     div(class="ddown-content")
-                        a(href="#") About ActiveGNS
-                        a(href="#") How-To Guide
-                        a(href="#") API Reference
-        h1 Getting started
+                        a(href="/doc/activegns") About ActiveGNS
+                        a(href="/doc/activecode") How-To Guide
+                        a(href="/doc/activequery") API Reference
+        h1 How-To Guide
             hr
             br
         div(style="font-family: 'Raleway',sans-serif; padding:5px;")
-        p(style="font-size: 24px; font-weight: 500;").
-            DNS serves as the “phone book” for the Internet: it maps domain names like activegns.org,
-            to a numeric Internet Protocol (IP) addresses like 52.37.209.19.
+            p(style="font-size: 18px; font-weight: 500;")
+                |We have a user-friendly browser-based GUI to let you interact with ActiveGNS.
+                |After registration, you will be assigned with a subdomain of activegns.org as
+                i(style="color:blue;")  your_username
+                font(style="color:blue;") .activegns.org.
+                |You could update your A record of the subdomain assigned to you and deploy your own active code on it.
+            h3 1. Update A record
+            div(style="font-size: 18px; font-weight: 500;")
+                figure(style="padding:10px")
+                    img(src="../images/record.png")
+                    figcaption(style="font-size: 14px;") Figure.1 Update A record
+                p As shown in Figure.1, to update A record of your subdomain, please
+                ul(style="list-style: none;")
+                    li 1. Type your A record in "A record" field
+                    li 2. Click "Submit Record" button
+                p
+                    i Notice,
+                    | your input must be numeric IPv4 addresses.
+                    | If your input of A record contains multiple IPv4 addresses, you must
+                    | enter those addresses in separate lines, like
+                ul(style="list-style: none;")
+                    li 192.0.2.23
+                    li 198.51.100.234
+
+            h3 2. Deploy active code
+            div(class="example" style="font-size: 18px; font-weight: 500;")
+                figure(style="padding:10px")
+                    img(src="../images/code.png")
+                    figcaption(style="font-size: 14px;") Figure.2 Update active code
+                p As shown in Figure.2, to update active code of your subdomain, please
+                ul(style="list-style: none;")
+                    li 1. Type your code in "Active code" field
+                    li 2. Click "Submit Code" button
+                p
+                    i Notice,
+                    | to have your code be called, you must implement the following function in your code:
+                textarea(readonly=true id="code").
+                    function run(value, field, querier) {
+                        // your code goes here
+                        return value;
+                    }
+                p The function has three parameters:
+                ul(type="square")
+                    li value: Javascript JSON collection with the A record included as a JSON,
+                        p.
+                            {"A":
+                                {"record":[ip1, ip2, ... ],
+                                "ttl":30
+                                }
+                            }
+                        p
+                            |[ip1, ip2, ...] are IPv4 addresses you put into your A record field,
+                            |"ttl" field indicates the Time-to-Live for the returned A record, the default value is 3600 seconds.
+                            |You may change its value in your code dynamically, but no less than 30 seconds.
+
+                    li accessor: JS JSON collection with the accessor's information.
+                        | The accessor is the entity who triggers your active code. Primarily, the client's IP address
+                        | will be encapsulated in it,
+                        p.
+                            {"client_ip":ip, ... }
+                    li querier: a Java object that provides many high level interfaces for your code.
+                        |It makes your code much more powerful by providing the high level features that does not present in
+                        |  the code base of Javascript
+                        a(href="https://www.ecma-international.org/ecma-262/5.1/")  ECMAScript5.1.
+                        | For more information on querier object, please refer to
+                        a(href="/doc/activequery")  querier API reference.
+                p
+                    i Notice,
+                    |The function must return a JS JSON collection that has the field "A" formatted as value parameter.
+
+        script.
+            var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            });
