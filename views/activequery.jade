@@ -34,41 +34,65 @@ block content
             p
                 | As we have shown in
                 a(href="/doc/activecode")  How-To Guide
-                |  when a piece of active code runs, two JSON collections(value and accessor) need to be passed into it.
+                |  when a piece of active code runs, a JSON collection(value) and a String(accessor) need to be passed into it.
                 | But what if the code needs more information than the value and accessor being passed into the function?
                 | We provide a simple way to let customer code get more information from outside, i.e., the third parameter,
                 i  querier,
                 | being passed into the run() function serves on this purpose.
             h3(style="font-weight: 800;") Interfaces
-            p Querier is an object being implemented in Java, we have following interfaces exposed to customer code:
+            p
+                |Querier provides several high level interfaces not presented in Javascript code base.
+                |Every parameter being passed into querier method is of Javascript type, e.g., JSON is
+                a(href="http://www.json.org/js.html")  Javascript JSON type,
+                | array is
+                a(href="http://www.w3schools.com/js/js_arrays.asp")  Javascript Array type.
+                |We have following interfaces exposed to customer code, and they can be called as querier.readGuid(...) and querier.writeGuid(...).
+                |For more example, please refer to
+                | more active code examples.
             div(class="example")
                 ul(style="list-style: none;")
                     li
                         textarea(readonly=true id="code1").
                             1. JSON readGuid(String guid, String field) throws Exception;
-                        | This interface allows customer's active code to read the value of field from guid.
-                        | The parameter guid could be the same as customer's own GUID,
-                        | and it does not require any ACL check to read the value of field.
-                        | If guid is different from the customer's own GUID,
-                        | the customer must make sure he is permitted to read the field of guid.
-                        | Otherwise, he will get an exception to indicate that the read operation is not allowed.
-                        p.
-                            It is a blocking call and it returns a JSON as a key-value pair like {field:value}.
+                    p
+                        | This function allows customer's active code to read the value of field from guid.
+                        ul
+                            li  guid: String
+                            | The parameter guid could be the same as customer's own GUID,
+                            | and it does not require any ACL check to read the value of field.
+                            | If guid is different from the customer's own GUID,
+                            | the customer must make sure he is permitted to read the field of guid.
+                            | Otherwise, he will get an exception to indicate that the read operation is not allowed.
+                            li  field: String
+                            | The field to query.
+                    p.
+                        This function is a blocking call and it returns a JSON as a key-value pair like {field:value}.
+
                     li
                         textarea(readonly=true id="code2").
-                            2. void writeGuid(String guid, String field, Object value) throws Exception;
-                        | This interface allows customer's code to write value into field of guid.
-                        | If the parameter guid is the same as customer's own GUID, there is no need for ACL check, and the field will be updated.
-                        | If guid is different from the customer's own GUID, the customer must make sure he is permitted to write into the field of GUID.
-                        | Otherwise, he will get an exception to indicate that the write operation is not allowed.
-                        p.
-                            It is a blocking call, and has no return value. No exception means the update operation succeeds.
+                            2. void writeGuid(String guid, String field, JSON value) throws Exception;
+                    p This function allows customer's code to write value into field of guid.
+                        ul
+                            li guid: String
+                            | If the parameter guid is the same as customer's own GUID, there is no need for ACL check, and the field will be updated.
+                            | If guid is different from the customer's own GUID, the customer must make sure he is permitted to write into the field of GUID.
+                            | Otherwise, he will get an exception to indicate that the write operation is not allowed.
+                            li field: String
+
+                            li value: JSON
+                            | This "value" parameter is a JSON object, where 
+                            a(href="http://www.json.org/js.html") JSON
+                            |  is a subset of the object literal notation of JavaScript.
+                    p
+                        | This function is a blocking call, but has no return value. Return without exception means the update operation succeeds.
+                        i Note, this method can only be called once for each run of your active code. If your code calls writeGuid more than once,
+                        | ActiveGNS will throw an exception and terminate your executed code.
                     li
                         textarea(readonly=true id="code3").
                             3. JSON getLocations(Array ipList) throws Exception;
                         | This interface allows customer's active code to get a city-level location information of a list of
                         | IP addresses. The input is a Javascript Array with all queried IP addresses, e.g., [ip1, ip2, ...].
-                        | The interface returns a JSON collection with each IP address in the input and its latitude, longitude values,
+                        | The interface returns a JSON object with each IP address in the input and its latitude, longitude values,
                         p.
                             {
                                 ip1:{"latitude":lat1, "longitude":lng1},
