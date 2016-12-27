@@ -45,23 +45,16 @@ function onTestClick() {
     );
 }
 
-const noop_code = "function run(value, field, querier) {\n\
+const noop_code = "function run(value, accessor, querier) {\n\
     return value;\n\
 }";
 
-const random_code = 'function run(value, field, querier) {\n\
-    var a = value["A"];\n\
-    var records = a.get("record");\n\
-    var rand = records.get(Math.ceil(Math.random()*records.length())-1);\n\
-    var length = records.length();\n\
-    for (var i = length-1; i>=0; i--) {\n\
-        records.remove(i);\n\
-    }\n\
-    records.put(rand);\n\
-    return value.put("A", a.put("record", records).put("ttl",0));\n\
+const random_code = 'function run(value, accessor, querier) {\n\
 }';
 
-const latency_code = '';
+
+const latency_code = 'function run(value, accessor, querier) {\n\
+}';
 
 
 function onChange(){
