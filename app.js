@@ -13,6 +13,7 @@ var flash = require('connect-flash');
 var routes = require('./routes/index');
 var test = require('./routes/test');
 var document = require('./routes/doc');
+var scheme = require('./routes/scheme');
 
 var app = express();
 
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/test', test);
 app.use('/doc', document);
+app.use('/scheme', scheme);
 
 // passport config
 var Account = require('./models/account');
