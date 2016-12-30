@@ -39,7 +39,7 @@ function run(value, accessor, querier) {
     locs.push(client);
     var coords = querier.getLocations(locs); // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
 
-    // do not calculate the distance for client
+    // calculate the distance between servers and clients
     for(i=0; i<records.length; i++){
         dist.push(Math.round(distance(coords[records[i]]["latitude"], coords[records[i]]["longitude"],
             coords[client]["latitude"], coords[client]["longitude"])));

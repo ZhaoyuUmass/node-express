@@ -24,24 +24,26 @@ block content
             hr
             br
         div(style="font-family: 'Raleway',sans-serif;")
-            h2 1. Local test with ActiveGNS
+            h2 Local test with ActiveGNS
             p(style="font-size: 18px; font-weight: 500;")
                 | This document introduces how we simulate MyXDNS(
                 a(href="http://dl.acm.org/citation.cfm?id=1242620") paper
-                |) with ActiveGNS running locally. To test this demo locally,
-                | see the
+                |) with ActiveGNS running locally. Before running this test,
+                | please see the
                 a(href="https://mobilityfirst.github.io/documentation/")  prerequisites for GNS
                 |  for more information.
+            h3 1. MyXDNS Scheme
             p(style="font-size: 18px; font-weight: 500;")
                 | MyXDNS decouples server selection from DNS request processing.
                 | It assumes there exists a pool of replicas for each client region.
                 | Its algorithm sorts the replicas based on the weight being assigned to each replicas in the pool.
                 | The paper lacks of proof for the "complicated" weight-based sorting algorithm. We simplify the algorithm
-                | with a simple weight-based scheme similar to
+                | with a weight-based scheme similar to
                 a(href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html")  Route 53 Weighted Routing Policy.
-                | We use the closest replicas to the DNS client as the pool of service replicas. The source code of MyXDNS scheme is shown below.
+                | We use a pool of the closest replicas to a DNS requester as the pool of service replicas. The source code of MyXDNS scheme is shown below.
                 | A video demo can be found
                 a(href="")  here.
+            h3 2. How-To Guide
             ul(style="font-size: 18px; padding:5px; font-weight: 500;", type="square")
                 li Checkout the most recent ActiveGNS from Github, and build application with ant:
                     pre.minicom
@@ -97,7 +99,7 @@ block content
                         li ...
 
 
-            h2 2. MyXDNS active code
+            h2 MyXDNS active code
             textarea(readonly=true id="code").
                 function distance(lat1, lon1, lat2, lon2) {
                     if(lat1 == undefined || lat2 == undefined) return Number.MAX_VALUE;

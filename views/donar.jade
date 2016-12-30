@@ -23,3 +23,75 @@ block content
         h1 Simulate DONAR
             hr
             br
+        div(style="font-family: 'Raleway',sans-serif;")
+            h2 Local test with ActiveGNS
+            p(style="font-size: 18px; font-weight: 500;")
+                | This document introduces how we simulate DONAR(
+                a(href="http://dl.acm.org/citation.cfm?id=1851211") paper
+                | ) with ActiveGNS running locally. Before running this test,
+                | please see the
+                a(href="https://mobilityfirst.github.io/documentation/")  prerequisites for GNS
+                |  for more information.
+            h3 1. DONAR Scheme
+            p(style="font-size: 18px; font-weight: 500;")
+                | DONAR proposes a decentralized server selection architecture. Different from a centralized architecture,
+                | each DONAR mapping node makes decision on its own. It requires a distributed storage for information dissemination.
+                | Its mechanism involves two important components, i.e., a policy update process for updating the routing policy through
+                |  a quadratic optimization problem solver and a request routing policy for redirecting incoming requests to the optimal replica.
+                | Each DONAR mapping node executes the policy update process periodically (e.g., every 2 minutes in the paper).
+                | DONAR's cost function is defined as the normalized Euclidean distance between IP geolocations, different from DONAR, we use the real geodistance between two geolocations as the cost function in our implementation.
+                | Moreover, as a proof-of-concept demo, we simplify the problem by dividing the set of clients into continent-level groups instead of CIDR-prefix-level as described in DONAR.
+                | Therefore, we only consider 7 groups of clients in our implementation, i.e., EU, AS, NA, SA, AF, OC, AN.
+            h4
+                b (a) policy update process
+            p(style="font-size: 18px; font-weight: 500;")
+                | The policy update process solves a quadratic optimization problem to derive the local optimal request routing policy which is denoted as R_nci the fraction of requests from a client region c being redirected to a certain replica i by the mapping node n.
+                | This local unconstrained quadratic optimization problem (a decentralized form) is derived from a global linear constrained problem which is the centralized form of the same problem.
+                | The authors prove that the decentralized form of the problem can converge to the optimal solution of the centralized form of the problem.
+                | To implement this policy update process, we define a piece of active code on write operation.
+                | The update active code is triggered when decentralized storage service (simulated with a DonarUpdateClient) updates the collected information for the mapping node. The active code is shown below, and the steps to run the update process is also described below.
+            h4
+                b (b) request routing policy
+            p(style="font-size: 18px; font-weight: 500;")
+                | The request routing policy redirects incoming requests to the replica based on the local optimal redirection probability derived by the policy update process.
+                | It acts as a weighted routing policy. We use a piece of active code on read action to simulate the DONAR request routing policy..
+                | The active code is shown below, and instruction on how to a local demo is also described below.
+            h3 2. How-To Guide
+
+            ul(style="font-size: 18px; padding:5px; font-weight: 500;", type="square")
+                li Checkout the most recent ActiveGNS from Github, and build application with ant:
+                    pre.minicom
+                        b git clone https://github.com/ZhaoyuUmass/ActiveGNS
+                        br
+                        b cd ActiveGNS
+                        br
+                        b ant
+                    br
+
+                li We integrate ActiveGNS with GeoIP to resolve an IP address to a geolocation. To run this demo, you must download the most recent MaxMind GeoIP free tier binary gzipped DB from
+                    a(href="http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz")  http://dev.maxmind.com/geoip/geoip2/geolite2/
+                    | . Put the unzipped file(GeoLite2-City.mmdb) into
+                    b "ActiveGNS/conf/activeCode/"
+                    |  folder.
+                    br
+                    br
+
+                li Run a local server with administrator privilege as the DNS server needs to run on port 53:
+                    pre.minicom
+                        b sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties restart all
+                    br
+                h4
+                    b (a) policy update process
+                h4
+                    b (b) request routing policy
+                li Run a GNS client to update the test fields and code (administrator privilege is required as the client also needs to write into a local derby db which has been written by the server process):
+                    pre.minicom
+                        b sudo bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \
+                        br
+                        b edu.umass.cs.gnsclient.client.testing.activecode.schemes.DonarRoutingClient 3.3.3.10
+                    | , the last parameter (3.3.3.10) is the client address you want to test with.
+                    br
+
+                li Resolve the domain name "myxdns.activegns.org" with command "nslookup"
+                    pre.minicom
+                        b nslookup myxdns.activegns.org 127.0.0.1

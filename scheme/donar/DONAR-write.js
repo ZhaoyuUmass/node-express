@@ -17,22 +17,30 @@ function distance(lat1, lon1, lat2, lon2) {
 }
 
 function run(value, accessor, querier) {
-    // 0. convert DONAR cost function to geo-distance
-    var myIndex = null,//substitude with your own index,
-        records = value["A"]["record"], // an array of IP addresses for all replicas
-        client = value["A"]["client_ip"],
-        coords = querier.getLocations(records.push(client)), // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
-        costs = [],
-        i=0;
-
-    for(i=0; i<records.length; i++){
-        // some ip may not be able to be resolved, and the value will be the Number.MAX_VALUE
-        costs.push(distance(coords[records[i]]["latitude"], coords[records[i]]["longitude"],
-            coords[client]["latitude"], coords[client]["longitude"]));
+    if(!value.hasOwnProperty("lambda") && !value.hasOwnProperty("P")){
+        // if this is not a periodical update request for the price and redirection probability field of a DONAR mapping node
+        return value;
     }
 
+    // 0. Initialize arbitrary price and decision
+    var aRecord = querier.readGuid(null, "A")["A"],
+        weight = querier.readGuid(null, "weight")["weight"],
+        // the set of clients have been divided into a few groups on, e.g., continent-level or country-level
+        clientRegion = querier.readGuid(null, "clientRegion")["clientRegion"],
+        P = value["P"],
+        lambda = value["lambda"],
+        dist = [],
+        i = 0;
+
+
+    // calculate the distance between servers and clients
+    for(i=0; i<records.length; i++){
+        dist.push(Math.round(distance(coords[records[i]]["latitude"], coords[records[i]]["longitude"],
+            coords[client]["latitude"], coords[client]["longitude"])));
+    }
+    
+
     // 1. collect the latest P_ni for all n, itself and all other nodes
-    var P = querier.readGuid(null, "");
 
     // 2. collect the latest lambda_i for every replica i
 
