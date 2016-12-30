@@ -21,9 +21,10 @@ function sum(x, y){
 
 function run(value, accessor, querier) {
 
-    var records = value["A"]["record"], // an array of IP addresses for all replicas
-        client = value["A"]["client_ip"],
+    var records = value["A"]["record"],
+        client = value["client_ip"],
         weight = querier.readGuid(null, "weight")["weight"],
+        locs = records.slice(),
         w = [],
         indexes = [],
         dist = [],
@@ -31,18 +32,23 @@ function run(value, accessor, querier) {
 
     if(client == undefined){
         // if client ip does not exist, fetch a ip from the test field
-        client = querier.readGuid(null, "test_ip")[test_ip];
+        client = querier.readGuid(null, "testIp")["testIp"];
     }
-    var coords = querier.getLocations(records.push(client)); // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
 
+    // query the location info through geoip for all ip addresses
+    locs.push(client);
+    var coords = querier.getLocations(locs); // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
+
+    // do not calculate the distance for client
     for(i=0; i<records.length; i++){
         dist.push(Math.round(distance(coords[records[i]]["latitude"], coords[records[i]]["longitude"],
             coords[client]["latitude"], coords[client]["longitude"])));
     }
 
     // figure out all candidates
-    var minimal_distance = Math.min(dist),
+    var minimal_distance = Math.min.apply(Math, dist),
         i = -1;
+
     while ((i = dist.indexOf(minimal_distance, i+1)) != -1){
         indexes.push(i);
         w.push(weight[i]);
@@ -50,7 +56,7 @@ function run(value, accessor, querier) {
 
     // figure out the weight for all candidates
     var total = w.reduce(sum);
-    w.forEach(function(element, index){w[index]= element/total});
+    w.forEach(function(element, index){w[index] = element/total});
 
     // get the index of the returned replica
     var r = Math.random(),
@@ -59,6 +65,10 @@ function run(value, accessor, querier) {
         i++;
         r = r - w[i];
     }
-    value["A"]["record"] = [records[indexes[i]]];
+
+    // strip the replicas that have not been chosen
+    records.splice(indexes[i]+1, records.length);
+    records.splice(0, indexes[i]);
+
     return value;
 }

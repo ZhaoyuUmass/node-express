@@ -213,3 +213,18 @@ hr {
   height: auto;
   width: auto;
 }
+
+pre.minicom {
+  overflow: auto;
+  font-size: 10pt;
+  white-space: pre;
+  color: black;
+  background-color: lightgrey;
+  margin-left:30px;
+  margin-right:30px;
+  border-top: 1px dashed black;
+  border-left: 1px dashed black;
+  border-right: 1px dashed black;
+  border-bottom: 1px dashed black;
+  padding: 10px 10px 10px 10px;
+}

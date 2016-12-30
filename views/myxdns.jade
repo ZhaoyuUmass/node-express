@@ -23,14 +23,81 @@ block content
         h1 Simulate MyXDNS
             hr
             br
-        div(style="font-family: 'Raleway',sans-serif; padding:5px;")
-            h3 Test with ActiveGNS running locally
-                p
-                    | This document introduces how we simulate MyXDNS(
-                    a(href="http://dl.acm.org/citation.cfm?id=1242620") paper
-                    |) with ActiveGNS running locally.
+        div(style="font-family: 'Raleway',sans-serif;")
+            h2 1. Local test with ActiveGNS
+            p(style="font-size: 18px; font-weight: 500;")
+                | This document introduces how we simulate MyXDNS(
+                a(href="http://dl.acm.org/citation.cfm?id=1242620") paper
+                |) with ActiveGNS running locally. To test this demo locally,
+                | see the
+                a(href="https://mobilityfirst.github.io/documentation/")  prerequisites for GNS
+                |  for more information.
+            p(style="font-size: 18px; font-weight: 500;")
+                | MyXDNS decouples server selection from DNS request processing.
+                | It assumes there exists a pool of replicas for each client region.
+                | Its algorithm sorts the replicas based on the weight being assigned to each replicas in the pool.
+                | The paper lacks of proof for the "complicated" weight-based sorting algorithm. We simplify the algorithm
+                | with a simple weight-based scheme similar to
+                a(href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html")  Route 53 Weighted Routing Policy.
+                | We use the closest replicas to the DNS client as the pool of service replicas. The source code of MyXDNS scheme is shown below.
+                | A video demo can be found
+                a(href="")  here.
+            ul(style="font-size: 18px; padding:5px; font-weight: 500;", type="square")
+                li Checkout the most recent ActiveGNS from Github, and build application with ant:
+                    pre.minicom
+                        b git clone https://github.com/ZhaoyuUmass/ActiveGNS
+                        br
+                        b cd ActiveGNS
+                        br
+                        b ant
+                    br
 
-            h3 MyXDNS active code
+                li We integrate ActiveGNS with GeoIP to resolve an IP address to a geolocation. To run this demo, you must download the most recent MaxMind GeoIP free tier binary gzipped DB from
+                    a(href="http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz")  http://dev.maxmind.com/geoip/geoip2/geolite2/
+                    | . Put the unzipped file(GeoLite2-City.mmdb) into
+                    b "ActiveGNS/conf/activeCode/"
+                    |  folder.
+                    br
+                    br
+
+                li Run a local server with administrator privilege as the DNS server needs to run on port 53:
+                    pre.minicom
+                        b sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties restart all
+                    br
+                li Run a GNS client to update the test fields and code (administrator privilege is required as the client also needs to write into a local derby db which has been written by the server process):
+                    pre.minicom
+                        b sudo bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \
+                        br
+                        b edu.umass.cs.gnsclient.client.testing.activecode.schemes.MyXDNS 3.3.3.10
+                    |, the last parameter (3.3.3.10) is the client address you want to test with.
+                    br
+
+                li Resolve the domain name "myxdns.activegns.org" with command "nslookup"
+                    pre.minicom
+                        b nslookup myxdns.activegns.org 127.0.0.1
+                    | , you should see a returned address for "myxdns.activegns.org" to be either 3.3.3.3 or 3.3.3.4.
+                    | Repeat this command, the resolved address is randomly returned as either 3.3.3.3 or 3.3.3.4.
+
+                li Try to setup the client address with other values,
+                    pre.minicom
+                        b sudo bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \
+                        br
+                        b edu.umass.cs.gnsclient.client.testing.activecode.schemes.MyXDNS
+                        i  another_address
+                    |, and use the above nslookup command to check the returned result.
+
+                li You could also set the service pool by editing the file
+                    b  "conf/activeCode/myxdns"
+                    |. This configure file should follow the format as
+                    ul(style="list-style-type:none;")
+                        li
+                            i ip_address1 weight1
+                        li
+                            i ip_address2 weight2
+                        li ...
+
+
+            h2 2. MyXDNS active code
             textarea(readonly=true id="code").
                 function distance(lat1, lon1, lat2, lon2) {
                     if(lat1 == undefined || lat2 == undefined) return Number.MAX_VALUE;
@@ -51,9 +118,10 @@ block content
 
                 function run(value, accessor, querier) {
 
-                    var records = value["A"]["record"], // an array of IP addresses for all replicas
-                        client = value["A"]["client_ip"],
+                    var records = value["A"]["record"],
+                        client = value["client_ip"],
                         weight = querier.readGuid(null, "weight")["weight"],
+                        locs = records.slice(),
                         w = [],
                         indexes = [],
                         dist = [],
@@ -61,18 +129,23 @@ block content
 
                     if(client == undefined){
                         // if client ip does not exist, fetch a ip from the test field
-                        client = querier.readGuid(null, "test_ip")[test_ip];
+                        client = querier.readGuid(null, "testIp")["testIp"];
                     }
-                    var coords = querier.getLocations(records.push(client)); // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
 
+                    // query the location info through geoip for all ip addresses
+                    locs.push(client);
+                    var coords = querier.getLocations(locs); // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
+
+                    // do not calculate the distance for client
                     for(i=0; i<records.length; i++){
                         dist.push(Math.round(distance(coords[records[i]]["latitude"], coords[records[i]]["longitude"],
                             coords[client]["latitude"], coords[client]["longitude"])));
                     }
 
                     // figure out all candidates
-                    var minimal_distance = Math.min(dist),
+                    var minimal_distance = Math.min.apply(Math, dist),
                         i = -1;
+
                     while ((i = dist.indexOf(minimal_distance, i+1)) != -1){
                         indexes.push(i);
                         w.push(weight[i]);
@@ -80,7 +153,7 @@ block content
 
                     // figure out the weight for all candidates
                     var total = w.reduce(sum);
-                    w.forEach(function(element, index){w[index]= element/total});
+                    w.forEach(function(element, index){w[index] = element/total});
 
                     // get the index of the returned replica
                     var r = Math.random(),
@@ -89,7 +162,11 @@ block content
                         i++;
                         r = r - w[i];
                     }
-                    value["A"]["record"] = [records[indexes[i]]];
+
+                    // strip the replicas that have not been chosen
+                    records.splice(indexes[i]+1, records.length);
+                    records.splice(0, indexes[i]);
+
                     return value;
                 }
 

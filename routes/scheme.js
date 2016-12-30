@@ -10,8 +10,17 @@ router.get('/:page', function(req, resp){
         case "myxdns":
             resp.render('myxdns');
             break;
+        case "donar":
+            resp.render('donar');
+            break;
+        case "nakika":
+            resp.render('nakika');
+            break;
+        case "cost":
+            resp.render('cost');
+            break;
         default:
-            resp.send("no such scheme");
+            resp.send('Page not found!');
             break;
     }
 });
