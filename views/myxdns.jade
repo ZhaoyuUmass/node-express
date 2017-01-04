@@ -42,7 +42,7 @@ block content
                 a(href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html")  Route 53 Weighted Routing Policy.
                 | We use a pool of the closest replicas to a DNS requester as the pool of service replicas. The source code of MyXDNS scheme is shown below.
                 | A video demo can be found
-                a(href="")  here.
+                a(href="https://youtu.be/68PilFu029M")  here.
             h3 2. How-To Guide
             ul(style="font-size: 18px; padding:5px; font-weight: 500;", type="square")
                 li Checkout the most recent ActiveGNS from Github, and build application with ant:
@@ -71,7 +71,7 @@ block content
                         b sudo bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \
                         br
                         b edu.umass.cs.gnsclient.client.testing.activecode.schemes.MyXDNS 3.3.3.10
-                    |, the last parameter (3.3.3.10) is the client address you want to test with.
+                    |, the last parameter "3.3.3.10" is the client address you want to test with.
                     br
 
                 li Resolve the domain name "myxdns.activegns.org" with command "nslookup"

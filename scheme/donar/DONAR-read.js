@@ -19,7 +19,7 @@ function run(value, accessor, querier) {
     var records = value["A"]["record"],
         client = value["client_ip"],
         weight = querier.readGuid(null, "weight")["weight"],
-        load = querier.readGuid(null, "load")["weight"],
+        load = querier.readGuid(null, "load")["load"],
         decision = querier.readGuid(null, "decision")["decision"],
         locs = [],
         i = -1;
@@ -50,11 +50,11 @@ function run(value, accessor, querier) {
     records.splice(indexes[i]+1, records.length);
     records.splice(0, indexes[i]);
 
-    // take a record for this request routing
+    // update for this request, collected by the self-running process to figure out the proportion of requests directed to replica i
     var json = {};
     load[continent] = load[continent] + 1;
     json["load"] = load;
-    decision[continent][indexes[i]] = decision[continent][indexes[i]] + 1;
+    decision[indexes[i]] = decision[indexes[i]] + 1;
     json["decision"] = decision;
     querier.writeGuid(null, "", json);
 

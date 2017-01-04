@@ -19,6 +19,7 @@ function sum(x, y){
     return x+y;
 }
 
+
 function run(value, accessor, querier) {
 
     var records = value["A"]["record"],

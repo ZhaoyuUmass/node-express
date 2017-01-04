@@ -39,8 +39,8 @@ block content
                 | Its mechanism involves two important components, i.e., a policy update process for updating the routing policy through
                 |  a quadratic optimization problem solver and a request routing policy for redirecting incoming requests to the optimal replica.
                 | Each DONAR mapping node executes the policy update process periodically (e.g., every 2 minutes in the paper).
-                | DONAR's cost function is defined as the normalized Euclidean distance between IP geolocations, different from DONAR, we use the real geodistance between two geolocations as the cost function in our implementation.
-                | Moreover, as a proof-of-concept demo, we simplify the problem by dividing the set of clients into continent-level groups instead of CIDR-prefix-level as described in DONAR.
+                | DONAR's cost function is defined as the normalized Euclidean distance between IP geolocations. Different from DONAR, we use the real geodistance between two geolocations as the cost function in our implementation.
+                | Moreover, as a proof-of-concept demo, we simplify our implementation by dividing the set of clients into continent-level groups instead of CIDR-prefix-level used in DONAR.
                 | Therefore, we only consider 7 groups of clients in our implementation, i.e., EU, AS, NA, SA, AF, OC, AN.
             h4
                 b (a) policy update process
@@ -80,18 +80,230 @@ block content
                     pre.minicom
                         b sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties restart all
                     br
-                h4
-                    b (a) policy update process
-                h4
-                    b (b) request routing policy
-                li Run a GNS client to update the test fields and code (administrator privilege is required as the client also needs to write into a local derby db which has been written by the server process):
+                li
+                    | Run our GNS Donar client will
+                    | (1) update the test fields and code for both update and read operations,
+                    | (2) update the price of each replica and the true proportion of requests directed to each replicas,
+                    | which will trigger the update active code and use a quadratic programming solver to solve the optimization problem(the decentralized form) and figure out the optimal redirection probability from each client region to each replica.
+                    | We notice that the original paper does not use the constraint
+                    &#931
+                    sub i
+                    | R
+                    sub nci
+                    |=1 in its optimization problem. This constraint means the redirection probability from a single region to all replicas should add up to 1.
+                    | We correct this problem in our implementation and show the code below. To run the client, use the following command:
                     pre.minicom
                         b sudo bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \
                         br
-                        b edu.umass.cs.gnsclient.client.testing.activecode.schemes.DonarRoutingClient 3.3.3.10
-                    | , the last parameter (3.3.3.10) is the client address you want to test with.
+                        b edu.umass.cs.gnsclient.client.testing.activecode.schemes.Donar 3.3.3.10
+                    | , the last parameter "3.3.3.10" is the client address you want to test with.
                     br
 
-                li Resolve the domain name "myxdns.activegns.org" with command "nslookup"
+                li Resolve the domain name "donar.activegns.org" with command "nslookup", the raad active code will be triggered to return the address of replica based on the optimal redirection probability.
                     pre.minicom
                         b nslookup myxdns.activegns.org 127.0.0.1
+
+                li To config the
+
+                h3 DONAR active code
+                h4
+                    b (a) Update code
+                    textarea(readonly=true id="write").
+                        // a distance function
+                        function distance(lat1, lon1, lat2, lon2) {
+                            if(lat1 == undefined || lat2 == undefined) return Number.MAX_VALUE;
+                            var R = 6371; // Radius of the earth in km
+                            var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below
+                            var dLon = (lon2 - lon1) * Math.PI / 180;
+                            var a =
+                                0.5 - Math.cos(dLat)/2 +
+                                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                                (1 - Math.cos(dLon))/2;
+
+                            return R * 2 * Math.asin(Math.sqrt(a));
+                        }
+
+
+                        function sum(x, y){
+                            return x+y;
+                        }
+
+
+                        function run(value, accessor, querier) {
+                            if(!value.hasOwnProperty("lambda") && !value.hasOwnProperty("p")){
+                                // if this is not a periodical update request for the price and redirection probability field of a DONAR mapping node
+                                return value;
+                            }
+
+                            // constant
+                            const theta = 0.01,
+                                clientRegion = ["EU", "AS", "NA", "SA", "AF", "OC", "AN"];
+
+                            // 1. collect the latest P_ni for all other nodes
+                            // 2. collect the latest lambda_i for every replica i
+                            var p = value["p"],// the traffic load contributed by all other mapping nodes, independent of this node's decision
+                                // price : lambda
+                                lambda = value["lambda"],
+                                // weight of each replica define by user: w
+                                w = querier.readGuid(null, "w")["w"],
+                                // deviation for each replica: epsilon
+                                epsilon = querier.readGuid(null, "epsilon")["epsilon"],
+                                // # reqs from client c: can be used to calculate alpha
+                                clientReqs = querier.readGuid(null, "clientReqs")["clientReqs"],
+                                // the set of clients that is divided into a few groups
+                                regionInfo = querier.readGuid(null, "regionInfo")["regionInfo"],
+                                // the A record to fetch the information of replicas
+                                replicas = querier.readGuid(null, "A")["A"]["record"],
+                                dist = [],
+                                alpha = [],
+                                Q = [],
+                                c = [],
+                                A = [],
+                                h = [],
+                                weight = {}, // the real weight for request redirection
+                                numReplicas = replicas.length,
+                                numClientRegions = clientRegion.length,
+                                total = numReplicas*numClientRegions,
+                                s = querier.readGuid("null", "s")["s"];
+
+                            // calculate alpha
+                            var total = clientReqs.reduce(sum);
+                            clientReqs.forEach(function(element, index){alpha[index] = element/total});
+
+                            // get locations for all replicas through GeoIP
+                            var coords = querier.getLocations(replicas);
+
+                            // calculate the distance between client regions and replicas
+                            for(i=0; i<replicas.length; i++){
+                                dist.push(new Array());
+                                for(var j=0; j<clientRegion.length; j++) {
+                                    dist[i].push(Math.round(distance(coords[replicas[i]]["latitude"], coords[replicas[i]]["longitude"],
+                                        regionInfo[clientRegion[j]]["latitude"], regionInfo[clientRegion[j]]["longitude"])));
+                                }
+                            }
+
+
+                            // 3. solve optimization problem
+                            var sqr = function(x) { return x*x; };
+                            for(var i=0; i<total; i++){
+                                Q.push([]);
+                                // The original paper does not mention this constraint
+                                A.push([]);
+                                var xi = Math.floor(i/numReplicas),
+                                    xj = i%numReplicas;
+                                for(var j=0; j<total; j++){
+
+                                    var yi = Math.floor(j/numReplicas),
+                                        yj = j%numReplicas;
+
+                                    if(xi==yi){
+                                        Q[i].push(lambda[xi]*sqr(s)*alpha[xj]*alpha[yj]);
+                                        A[i].push(1);
+                                    }else {
+                                        Q[i].push(0);
+                                        A[i].push(0);
+                                    }
+                                }
+                                c.push(lambda[xi]*(p[xi]-w[xi])*s*alpha[xj]+s*alpha[xj]*dist[xi][xj]);
+                                h.push(1);
+                            }
+                            // use numeric to solve the quadratic programming problem
+                            var solution = numeric.solveQP(Q, c, A, h);
+                            var policy = solution["unconstrained_solution"];
+                            for(i=0; i<numClientRegions; i++){
+                                weight[clientRegion[i]] = policy.slice(i*numReplicas, (i+1)*numReplicas);
+                            }
+                            value["weight"] = weight;
+                            print(JSON.stringify(weight));
+
+                            // 4. compute p_ni and update for this mapping node
+                            var P = [];
+                            for(i=0; i<numReplicas; i++){
+                                var total = 0;
+                                for(var j=0; j<numClientRegions; j++){
+                                    total += weight[clientRegion[j]][i]*alpha[j];
+                                }
+                                P.push(total*s);
+                            }
+                            value["P"] = P;
+                            print(P);
+
+                            // 5. Update lambda
+                            for(i=0; i<numReplicas; i++){
+                                var r = Math.random();
+                                if(r<1/numReplicas){
+                                    // update
+                                    print("Before updating: "+i+" "+lambda);
+                                    lambda[i] = Math.max(0, lambda[i]+theta*(sqr(P[i]+p[i]-w[i]) - sqr(epsilon[i])));
+                                    print("After updating: "+i+" "+lambda);
+                                }
+                            }
+                            // return result
+                            print(JSON.stringify(value));
+                            return value;
+                        }
+                h4
+                    b (b) Read code
+                    textarea(readonly=true id="read").
+                        function isLargerThan(value) {
+                            return function(element, index, array) {
+                                return (element > value);
+                            }
+                        }
+
+                        function run(value, accessor, querier) {
+                            if(!value.hasOwnProperty("A")){
+                                // if this is not a DNS request, return the original value
+                                return value;
+                            }
+
+                            var records = value["A"]["record"],
+                                client = value["client_ip"],
+                                weight = querier.readGuid(null, "weight")["weight"],
+                                load = querier.readGuid(null, "load")["load"],
+                                decision = querier.readGuid(null, "decision")["decision"],
+                                locs = [],
+                                i = -1;
+
+                            if (client == undefined) {
+                                // if client ip does not exist, fetch a ip from the test field
+                                client = querier.readGuid(null, "testIp")["testIp"];
+                            }
+
+                            // query the location info through geoip for client ip address
+                            locs.push(client);
+                            var coords = querier.getLocations(locs); // the returned value is formatted as {ip1: {"latitude":lat1, "longitude":lng1},...}
+
+                            // retrieve the continent info and get the corresponding weight
+                            var continent = coords[client]["continent"];
+                            var w = weight[continent];
+                            var indexes = w.filter(isLargerThan(0));
+
+                            // figure out the index of the chosen replica
+                            var r = Math.random(),
+                                i = -1;
+                            while(r>=0){
+                                i++;
+                                r = r - w[indexes[i]];
+                            }
+
+                            // strip off the replicas not being chosen
+                            records.splice(indexes[i]+1, records.length);
+                            records.splice(0, indexes[i]);
+
+                            // update for this request, collected by the self-running process to figure out the proportion of requests directed to replica i
+                            var json = {};
+                            load[continent] = load[continent] + 1;
+                            json["load"] = load;
+                            decision[indexes[i]] = decision[indexes[i]] + 1;
+                            json["decision"] = decision;
+                            querier.writeGuid(null, "", json);
+
+                            return value;
+                        }
+        script.
+            var editor1 = CodeMirror.fromTextArea(document.getElementById('write'));
+            editor1.setSize("100%", "100%");
+            var editor2 = CodeMirror.fromTextArea(document.getElementById('read'));
+            editor2.setSize("100%", "100%");
+
