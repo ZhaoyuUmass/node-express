@@ -14,6 +14,7 @@ var routes = require('./routes/index');
 var test = require('./routes/test');
 var document = require('./routes/doc');
 var scheme = require('./routes/scheme');
+var acl = require('./routes/acl');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use('/', routes);
 app.use('/test', test);
 app.use('/doc', document);
 app.use('/scheme', scheme);
+app.use('/acl', acl);
 
 // passport config
 var Account = require('./models/account');

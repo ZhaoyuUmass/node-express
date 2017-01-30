@@ -164,11 +164,11 @@ block content
                                 numReplicas = replicas.length,
                                 numClientRegions = clientRegion.length,
                                 total = numReplicas*numClientRegions,
-                                s = querier.readGuid("null", "s")["s"];
+                                s = querier.readGuid(null, "s")["s"];
 
                             // calculate alpha
-                            var total = clientReqs.reduce(sum);
-                            clientReqs.forEach(function(element, index){alpha[index] = element/total});
+                            var totalLoad = clientReqs.reduce(sum);
+                            clientReqs.forEach(function(element, index){alpha[index] = element/totalLoad});
 
                             // get locations for all replicas through GeoIP
                             var coords = querier.getLocations(replicas);

@@ -60,8 +60,8 @@ function run(value, accessor, querier) {
         s = querier.readGuid(null, "s")["s"];
 
     // calculate alpha
-    var total = clientReqs.reduce(sum);
-    clientReqs.forEach(function(element, index){alpha[index] = element/total});
+    var totalLoad = clientReqs.reduce(sum);
+    clientReqs.forEach(function(element, index){alpha[index] = element/totalLoad});
 
     // get locations for all replicas through GeoIP
     var coords = querier.getLocations(replicas);
@@ -118,7 +118,7 @@ function run(value, accessor, querier) {
         }
         P.push(total*s);
     }
-    value["P"] = P;
+    value["p"] = P;
     print(P);
 
     // 5. Update lambda
