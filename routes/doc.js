@@ -8,16 +8,16 @@ router.get('/:page', function(req, resp){
     var query = req.params.page;
     switch(query){
         case "activecode":
-            resp.render('activecode');
+            resp.render('doc/activecode');
             break;
         case "activegns":
-            resp.render('activegns');
+            resp.render('doc/activepns');
             break;
         case "activequery":
-            resp.render('activequery');
+            resp.render('doc/activequery');
             break;
         default:
-            resp.render('activegns');
+            resp.render('doc/activepns');
             break;
     }
 });

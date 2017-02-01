@@ -73,7 +73,3 @@ function onChange(){
             break;
     }
 }
-
-function loadFromS3(){
-
-}

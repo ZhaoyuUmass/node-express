@@ -1,40 +1,26 @@
 //
    Created by gaozy on 12/15/16.
 
-extends simple
+extends ../template/simple
 
 block content
     .container
-        div(class="nav")
-            ul
-                li(style="float:right")
-                    a(href="/register") Register
-                li(style="float:right")
-                    a(href="/login") Login
-                li
-                    a(href="/") ActiveGNS
-                li(class="ddown")
-                    a(href="#" class="dropbtn") Document
-                    div(class="ddown-content")
-                        a(href="/doc/activegns") About ActiveGNS
-                        a(href="/doc/activecode") How-To Guide
-                        a(href="/doc/activequery") API Reference
-        h1 ActiveGNS: A programmable managed DNS service
+        h1 ActivePNS: A programmable managed DNS service
         hr
         br
         div(style="font-family: 'Raleway',sans-serif; padding:5px;")
             h3 Q1.What is DNS?
-            p.
-                DNS serves as the “phone book” for the Internet: it maps domain names like activegns.org,
-                to a numeric Internet Protocol (IP) addresses like 52.37.209.19.
-                Every device that sends or receives data on the Internet has a unique IP address,
-                which the Internet’s routing software and hardware use to identify and locate the device.
-                DNS is what makes it possible for users to access a website by human-readable name,
-                which is easier for most people to remember than a numeric string in an IP address.
-            h3 Q2.What is ActiveGNS?
-            p.
-                ActiveGNS is a programmable managed DNS service that allows you to write your own code
-                to control the DNS response for your domain name.
+            p
+                |DNS serves as the “phone book” for the Internet: it maps domain names like pnsanonymous.org,
+                | to a numeric Internet Protocol (IP) addresses like 52.37.209.19.
+                | Every device that sends or receives data on the Internet has a unique IP address,
+                | which the Internet’s routing software and hardware use to identify and locate the device.
+                | DNS is what makes it possible for users to access a website by human-readable name,
+                | which is easier for most people to remember than a numeric string in an IP address.
+            h3 Q2.What is ActivePNS?
+            p
+                |ActivePNS is a programmable managed DNS service that allows you to write your own code
+                | to control the DNS response for your domain name.
             p
                 |Similar to the other managed DNS services, such as
                 a(href="https://aws.amazon.com/route53/")
@@ -47,7 +33,7 @@ block content
             p
                 | Besides, you could also write your own code (in Javascript) to control the DNS response for your domain. See
                 a(href="/doc/activecode")  how
-                |  with ActiveGNS.
+                |  with ActivePNS.
 
             h3 Q3.Why programmability?
             p.
@@ -65,11 +51,11 @@ block content
                 a(href="#")  more examples
                 |  of active code.
             h3 Q4.How it works?
-            p.
-                As shown in the figure, our DNS server serves all DNS requests for the domain name ends with "activegns.org".
+            p
+                |As shown in the figure, our DNS server serves all DNS requests for the domain name ends with "pnsanonymous.org".
             ul
-                li The DNS request is first translated to a GNS request.
-                li GNS fetch your A record and code from DB then run the code on ActiveGNS.
+                li The DNS request is first translated to a PNS request.
+                li PNS fetch your A record and code from DB then run the code on ActivePNS.
                 li After executing the code, the response is sent back through the DNS server.
 
             img(src="../images/arch.png", style="width:50%;height:50%;")

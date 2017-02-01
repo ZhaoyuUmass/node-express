@@ -1,41 +1,27 @@
-extends layout
+extends ../template/layout
 
 block content
   .container
     if (!user)
-      div(class="nav")
-        ul
-          li(style="float:right")
-            a(href="/register") Register
-          li(style="float:right")
-            a(href="/login") Login
-          li
-            a(href="/") ActiveGNS
-          li(class="ddown")
-            a(href="#" class="dropbtn") Document
-            div(class="ddown-content")
-              a(href="/doc/activegns") About ActiveGNS
-              a(href="/doc/activecode") How-To Guide
-              a(href="/doc/activequery") API Reference
-              a(href="http://activegns.org/activecode.pdf") Paper
       table
         tr
           td
-            div(style="font-family: 'Raleway',sans-serif; background:#eaf2ff; width:400px;height:400px;padding:5px;")
-              h1(style="font-size: 40px; font-weight: 800;") ActiveGNS
-              h4(style="font-size: 32px; font-weight: 800; ") A programmable managed DNS service
-              div(style="font-size: 24px; font-weight: 800;")
-                p Flexible
-                p Free
+            //'Comic Sans MS', cursive, sans-serif
+            //Verdana, Geneva, sans-serif
+            div(style="border:solid 2px #f45342; font-family: 'Comic Sans MS', cursive, sans-serif; background:#ffffff;color:#4286f4; width:400px;height:400px;padding:5px;")
+              h1(style="font-size: 40px; font-weight: 800;") ActivePNS
+              div(style="font-size: 12px; ")
+              | ActivePNS is a programmable managed DNS service. You can write Javascript code to define your own routing
+              | scheme for your A record hosted by ActivePNS. Try out by registering your account first.
           td
-            img(src="images/activegns.png", style="width:100%;height:100%;padding:5px;")
+            img(src="images/activepns.png", style="width:100%;height:100%;padding:5px;")
     if (user)
       div(class="nav")
         ul
           li(class="ddown")
             a(href="#" class="dropbtn") Document
             div(class="ddown-content")
-              a(href="/doc/activegns") About ActiveGNS
+              a(href="/doc/activepns") About ActiveGNS
               a(href="/doc/activecode") How-To Guide
               a(href="/doc/activequery") API Reference
           li(style="float:right")

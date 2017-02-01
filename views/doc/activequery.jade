@@ -1,36 +1,22 @@
 //
    Created by gaozy on 12/18/16.
 
-extends doc
+extends ../template/doc
 
 block content
     .container
-        div(class="nav")
-            ul
-                li(style="float:right")
-                    a(href="/register") Register
-                li(style="float:right")
-                    a(href="/login") Login
-                li
-                    a(href="/") ActiveGNS
-                li(class="ddown")
-                    a(href="#" class="dropbtn") Document
-                    div(class="ddown-content")
-                        a(href="/doc/activegns") About ActiveGNS
-                        a(href="/doc/activecode") How-To Guide
-                        a(href="/doc/activequery") API Reference
         h1 Querier API Interface
             hr
             br
         div(style="font-family: 'Raleway',sans-serif; padding:5px;font-size: 18px; font-weight: 500;")
             p
-                |This document contains information on active code querier interface for customer code to interact with ActiveGNS.
-                | ActiveGNS allows its customer code to access the fields of other GUIDs as long as the customer's GUID has the
-                | permission to access the field. GNS uses ACL(Access Control List) to prevent unauthorized access to customer's field.
+                |This document contains information on active code remote query interface for customer code to interact with ActivePNS.
+                | ActivePNS allows its customer code to access the fields of other XIDs as long as the customer's XID has the
+                | permission to access the field. ActivePNS uses ACL(Access Control List) to prevent unauthorized access to customer's field.
                 | To understand the details about ACL, please refer to
                 a(href="https://en.wikipedia.org/wiki/Access_control_list")  access control list.
 
-            h3(style="font-weight: 800;") Why we need active code querier?
+            h3(style="font-weight: 800;") Why we need active code remote query?
             p
                 | As we have shown in
                 a(href="/doc/activecode")  How-To Guide
@@ -39,57 +25,60 @@ block content
                 | We provide a simple way to let customer code get more information from outside, i.e., the third parameter,
                 i  querier,
                 | being passed into the run() function serves on this purpose.
-            h3(style="font-weight: 800;") Interfaces
+            h3(style="font-weight: 800;") Querier interfaces
             p
                 |Querier provides several high level interfaces not presented in Javascript code base.
                 |Every parameter being passed into querier method is of Javascript type, e.g., JSON is
                 a(href="http://www.json.org/js.html")  Javascript JSON type,
                 | array is
                 a(href="http://www.w3schools.com/js/js_arrays.asp")  Javascript Array type.
-                |We have following interfaces exposed to customer code, and they can be called as querier.readGuid(...) and querier.writeGuid(...).
+                |We have following interfaces exposed to customer code, and they can be called as querier.readXid(...) and querier.writeXid(...)
+                | explicitly within customer's active code.
                 |For more example, please refer to
                 | more active code examples.
             div(class="example")
                 ul(style="list-style: none;")
                     li
                         textarea(readonly=true id="code1").
-                            1. JSON readGuid(String guid, String field) throws Exception;
+                            1. JSON readXid(Array<String> fields [, String xid]) throws Exception;
                     p
-                        | This function allows customer's active code to read the value of field from guid.
+                        | This function allows customer's active code to read the values of several fields from XID.
                         ul
-                            li  guid: String
-                            | The parameter guid could be the same as customer's own GUID,
+                            li  fields: Array<String>
+                            | The fields to query.
+                            li  xid: String
+                            | The parameter xid could be the same as customer's own XID,
                             | and it does not require any ACL check to read the value of field.
-                            | If guid is different from the customer's own GUID,
-                            | the customer must make sure he is permitted to read the field of guid.
+                            | If XID is different from the customer's own XID,
+                            | the customer must make sure he is permitted to read the field of XID.
                             | Otherwise, he will get an exception to indicate that the read operation is not allowed.
-                            li  field: String
-                            | The field to query.
+                            | If xid is not specified, then the query target XID is the caller itself.
                     p.
-                        This function is a blocking call and it returns a JSON as a key-value pair like {field:value}.
+                        This function is a blocking call and it returns a JSON as a key-value pair like {field1:value1, field2:value2, ...}, where field1, field2, ... belong to in fields.
 
                     li
                         textarea(readonly=true id="code2").
-                            2. void writeGuid(String guid, String field, JSON value) throws Exception;
-                    p This function allows customer's code to write value into field of guid.
+                            2. void writeXid(JSON value [,String xid]) throws Exception;
+                    p This function allows customer's code to write value into field of XID.
                         ul
-                            li guid: String
-                            | If the parameter guid is the same as customer's own GUID, there is no need for ACL check, and the field will be updated.
-                            | If guid is different from the customer's own GUID, the customer must make sure he is permitted to write into the field of GUID.
-                            | Otherwise, he will get an exception to indicate that the write operation is not allowed.
-                            li field: String
-
                             li value: JSON
-                            | This "value" parameter is a JSON object, where 
+                            | This "value" parameter is a JSON object, where
                             a(href="http://www.json.org/js.html") JSON
                             |  is a subset of the object literal notation of JavaScript.
+                            li xid: String
+                            | If the parameter xid is the same as customer's own XID, there is no need for ACL check, and the field will be updated.
+                            | If xid is different from the customer's own XID, the customer must make sure he is permitted to write into the field of XID.
+                            | Otherwise, he will get an exception to indicate that the write operation is not allowed.
+                            | If xid is not specified, then the query target XID is the caller itself.
+
                     p
                         | This function is a blocking call, but has no return value. Return without exception means the update operation succeeds.
-                        i Note, this method can only be called once for each run of your active code. If your code calls writeGuid more than once,
-                        | ActiveGNS will throw an exception and terminate your executed code.
+                        i Note, this method can only be called once for each run of your active code. If your code calls writeXid more than once,
+                        | ActivePNS will throw an exception.
+                ul(style="list-style: none;")
                     li
                         textarea(readonly=true id="code3").
-                            3. JSON getLocations(Array ipList) throws Exception;
+                            3. JSON getLocations(Array<String> ipList) throws Exception;
                         | This interface allows customer's active code to get a city-level location information of a list of
                         | IP addresses. The input is a Javascript Array with all queried IP addresses, e.g., [ip1, ip2, ...].
                         | The interface returns a JSON object with each IP address in the input and its latitude, longitude values,

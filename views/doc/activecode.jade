@@ -1,33 +1,19 @@
 //
    Created by gaozy on 12/16/16.
 
-extends doc
+extends ../template/doc
 
 block content
     .container
-        div(class="nav")
-            ul
-                li(style="float:right")
-                    a(href="/register") Register
-                li(style="float:right")
-                    a(href="/login") Login
-                li
-                    a(href="/") ActiveGNS
-                li(class="ddown")
-                    a(href="#" class="dropbtn") Document
-                    div(class="ddown-content")
-                        a(href="/doc/activegns") About ActiveGNS
-                        a(href="/doc/activecode") How-To Guide
-                        a(href="/doc/activequery") API Reference
         h1 How-To Guide
             hr
             br
         div(style="font-family: 'Raleway',sans-serif; padding:5px;")
             p(style="font-size: 18px; font-weight: 500;")
-                |We have a user-friendly browser-based GUI to let you interact with ActiveGNS.
-                |After registration, you will be assigned with a subdomain of activegns.org as
+                |We have a user-friendly browser-based GUI to let you interact with ActivePNS.
+                |After registration, you will be assigned with a subdomain of pnsanonymous.org as
                 i(style="color:blue;")  your_username
-                font(style="color:blue;") .activegns.org.
+                font(style="color:blue;") .pnsanonymous.org.
                 |You could update your A record of the subdomain assigned to you and deploy your own active code on it.
             h3 1. Update A record
             div(style="font-size: 18px; font-weight: 500;")
@@ -35,7 +21,7 @@ block content
                     img(src="../images/record.png")
                     figcaption(style="font-size: 14px;") Figure.1 Update A record
                 p As shown in Figure.1, to update A record of your subdomain, please
-                ul(style="list-style: none;")
+                ul(class="plain")
                     li 1. Type your A record in "A record" field
                     li 2. Click "Submit Record" button
                 p
@@ -54,7 +40,7 @@ block content
                 p
                     |nslookup
                     i(style="color:blue;")   your_username
-                    |.activegns.org
+                    |.pnsanonymous.org
 
             h3 2. Deploy active code
             div(class="example" style="font-size: 18px; font-weight: 500;")
@@ -89,7 +75,7 @@ block content
                             |You may change its value in your code dynamically, but no less than 30 seconds.
                             |client_ip is an IPv4 address.
 
-                    li accessor: a string of accessor's guid
+                    li accessor: a string of accessor's XID
                         | The accessor is the entity who triggers your active code. In our managed DNS service,
                         | this value is always null.
                     li querier: a Java object that provides many high level interfaces for your code.
@@ -101,7 +87,7 @@ block content
                 p
                     i Notice,
                     |The function must return a JS JSON collection that has the field "A" formatted as value parameter shown above,
-                    | otherwise, ActiveGNS will send no response to the client.
+                    | otherwise, ActivePNS will send no response to the client.
 
                 p
                     |To test whether your code works, we recommend using our

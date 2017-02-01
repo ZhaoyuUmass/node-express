@@ -6,7 +6,7 @@ var router = express.Router();
 const spawn = require('child_process').spawn;
 
 router.get('/', function(req, resp){
-    resp.render('test');
+    resp.render('test/test');
 });
 
 

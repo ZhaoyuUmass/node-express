@@ -13,11 +13,24 @@ html
     script(type="text/javascript", src="lib/javascript.js")
     script(type="text/javascript", src='http://code.jquery.com/jquery.js')
     script(type="text/javascript", src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
-    script(type="text/javascript", src='script.js')
+    script(type="text/javascript", src='../lib/pnsScript.js')
   body
     if (error && error.length > 0)
       br
       h4.error-msg= error
       br
-
-    block content
+  div(class="nav")
+    ul
+      li(style="float:right")
+        a(href="/register") Register
+      li(style="float:right")
+        a(href="/login") Login
+      li
+        a(href="/") ActivePNS
+      li(class="ddown")
+        a(href="#" class="dropbtn") Document
+        div(class="ddown-content")
+          a(href="/doc/activepns") About ActivePNS
+          a(href="/doc/activecode") How-To Guide
+          a(href="/doc/activequery") API Reference
+  block content

@@ -13,18 +13,23 @@ const UPDATE_CODE = "update_code",
     REMOVE_CODE = "remove_code",
     DELETE_RECORD = "delete_record";
 
+const LOGIN = 'basic/login',
+    REGISTER = 'basic/register',
+    INDEX = 'basic/index',
+    ERROR = 'template/error';
+
 router.get('/', function (req, res) {
     var user = req.user;
     if(user){
         var username = user.username;
         MongoClient.connect(db_url, function(err, db){
             if(err){
-                return res.render('error', { error: "Cannot connect to db when fetching data."});
+                return res.render(ERROR, { error: "Cannot connect to db when fetching data."});
             }else {
                 var collection = db.collection('users');
                 collection.find({username: username}).toArray(function(err, results) {
                     if(err){
-                        res.render('error', {
+                        res.render(ERROR, {
                             message: err.message,
                             error: err
                         });
@@ -36,14 +41,14 @@ router.get('/', function (req, res) {
                             code: code,
                             record: record
                         };
-                        res.render('index', json);
+                        res.render(INDEX, json);
                     }
                 });
                 db.close();
             }
         });
     }else {
-        res.render('index', { user : req.user });
+        res.render(INDEX, { user : req.user });
     }
 });
 
@@ -57,7 +62,7 @@ router.post('/', function (req, res) {
     // Fetch the record from db first
     MongoClient.connect(db_url, function(err, db){
         if(err){
-            res.render('error', {
+            res.render(ERROR, {
                 message: err.message,
                 error: err
             });
@@ -67,7 +72,7 @@ router.post('/', function (req, res) {
 
             collection.find({username:username}).toArray(function(err, results) {
                 if(err){
-                    res.render('error', {
+                    res.render(ERROR, {
                         message: err.message,
                         error: err
                     });
@@ -108,7 +113,6 @@ router.post('/', function (req, res) {
                         default:
                             break;
                     }
-
 
                     if (toUpdate) {
                         var json = {
@@ -160,22 +164,16 @@ function sendRequestToProxy(json, next){
         client.destroy(); // kill client after server's response
         next(JSON.parse(data));
     });
-    /*
-    client.on('close', function () {
-        console.log('Connection closed');
-        next(null);
-    });
-    */
 }
 
 router.get('/register', function(req, res) {
-    res.render('register', { });
+    res.render(REGISTER, { });
 });
 
 router.post('/register', function(req, res) {
     Account.register(new Account({ username : req.body.username }), req.body.password, function(err, account) {
         if (err) {
-          return res.render('register', { error : err.message });
+          return res.render(REGISTER, { error : err.message });
         }
 
         var json = { action:"create", username:req.body.username };
@@ -184,7 +182,7 @@ router.post('/register', function(req, res) {
             if(data) {
                 MongoClient.connect(db_url, function(err, db){
                     if(err){
-                        return res.render('register', { error: "Cannot connect to db when creating this account."});
+                        return res.render(REGISTER, { error: "Cannot connect to db when creating this account."});
                     }else {
                         var collection = db.collection('users');
                         json.guid = data.guid;
@@ -199,7 +197,7 @@ router.post('/register', function(req, res) {
                                 passport.authenticate('local')(req, res, function () {
                                     req.session.save(function (err) {
                                         if (err) {
-                                            return res.render('register', { error: "Wrong authentication when registered!"});
+                                            return res.render(REGISTER, { error: "Wrong authentication when registered!"});
                                         }
                                         res.redirect('/');
                                     });
@@ -212,7 +210,7 @@ router.post('/register', function(req, res) {
                 });
 
             } else {
-                return res.render('register', { error: "Cannot create this account on GNS, please try later."});
+                return res.render(REGISTER, { error: "Cannot create this account on GNS, please try later."});
             }
 
         });
@@ -224,7 +222,7 @@ router.post('/register', function(req, res) {
 
 
 router.get('/login', function(req, res) {
-    res.render('login', { user : req.user, error : req.flash('error')});
+    res.render(LOGIN, { user : req.user, error : req.flash(ERROR)});
 });
 
 router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: "The account doesn't exist or the password is incorrect" }), function(req, res, next) {

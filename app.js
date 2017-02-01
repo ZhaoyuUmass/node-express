@@ -42,8 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/test', test);
 app.use('/doc', document);
-app.use('/scheme', scheme);
-app.use('/acl', acl);
+//app.use('/scheme', scheme);
+//app.use('/acl', acl);
 
 // passport config
 var Account = require('./models/account');
@@ -63,12 +63,14 @@ app.use(function(req, res, next) {
 
 // error handlers
 
+const ERROR = 'template/error';
+
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
-        res.render('error', {
+        res.render(ERROR, {
             message: err.message,
             error: err
         });
@@ -79,7 +81,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.render(ERROR, {
         message: err.message,
         error: {}
     });

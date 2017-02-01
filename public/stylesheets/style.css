@@ -1,3 +1,7 @@
+ul.plain {
+  list-style-type: none;
+}
+
 .nav{
   margin: 0 0 0 0;
   font-size: 100%;
