@@ -10,23 +10,12 @@ block content
             //Verdana, Geneva, sans-serif
             div(style="border:solid 2px #f45342; font-family: 'Comic Sans MS', cursive, sans-serif; background:#ffffff;color:#4286f4; width:400px;height:400px;padding:5px;")
               h1(style="font-size: 40px; font-weight: 800;") ActivePNS
-              div(style="font-size: 12px; ")
+              div(style="font-size: 24px; font-weight: 800;")
               | ActivePNS is a programmable managed DNS service. You can write Javascript code to define your own routing
               | scheme for your A record hosted by ActivePNS. Try out by registering your account first.
           td
             img(src="images/activepns.png", style="width:100%;height:100%;padding:5px;")
     if (user)
-      div(class="nav")
-        ul
-          li(class="ddown")
-            a(href="#" class="dropbtn") Document
-            div(class="ddown-content")
-              a(href="/doc/activepns") About ActiveGNS
-              a(href="/doc/activecode") How-To Guide
-              a(href="/doc/activequery") API Reference
-          li(style="float:right")
-            a(href="/logout") Logout
-
       p.h4 Hello #{user.username}
       //h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
       h6

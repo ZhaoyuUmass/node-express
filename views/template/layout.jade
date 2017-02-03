@@ -21,10 +21,14 @@ html
       br
   div(class="nav")
     ul
-      li(style="float:right")
-        a(href="/register") Register
-      li(style="float:right")
-        a(href="/login") Login
+      if(!user)
+        li(style="float:right")
+          a(href="/register") Register
+        li(style="float:right")
+          a(href="/login") Login
+      else
+        li(style="float:right")
+          a(href="/logout") Logout
       li
         a(href="/") ActivePNS
       li(class="ddown")
