@@ -1,0 +1,72 @@
+//
+   Created by gaozy on 2/8/17.
+
+extends ../template/doc
+
+block content
+    .container
+        h1 Examples
+            hr
+            br
+        h3 Random Policy
+        textarea(readonly=true id="code1").
+            function run(value, accessor, querier) {
+              var records = value["A"]["record"];
+              var rand = Math.ceil(Math.random()*records.length)-1;
+              value["A"]["record"] = records.slice(rand, rand+1);
+              return value;
+            }
+
+        h3 Geographic policy
+        textarea(readonly=true id="code2").
+            function distance(lat1, lon1, lat2, lon2) {
+                if(lat1 == undefined || lat2 == undefined) return Number.MAX_VALUE;
+                var R = 6371; // Radius of the earth in km
+                var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below
+                var dLon = (lon2 - lon1) * Math.PI / 180;
+                var a =
+                    0.5 - Math.cos(dLat)/2 +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    (1 - Math.cos(dLon))/2;
+
+                return R * 2 * Math.asin(Math.sqrt(a));
+            }
+
+            function run(value, accessor, querier) {
+                var records = value.A.record,
+                client_ip = value.client_ip,
+                newRecords = [],
+                dist = [],
+                locs = records.slice(),
+                i=0;
+
+                locs.push(client_ip);
+
+                var coords = querier.getLocations(locs);
+                // do not calculate the distance for client
+                for(i=0; i<records.length; i++){
+                    dist.push(Math.round(distance(coords[records[i]]["latitude"], coords[records[i]]["longitude"],
+                        coords[client_ip]["latitude"], coords[client_ip]["longitude"])));
+                }
+
+                // figure out all candidates
+                var minimal_distance = Math.min.apply(Math, dist),
+                    pos = 0,
+                    k = 0
+                    i=-1;
+
+                while ((i = dist.indexOf(minimal_distance, i+1)) != -1){
+                    var diff = i-pos;
+                    records.splice(k,diff);
+                    k++;
+                    pos = i;
+                }
+                records.splice(k,records.length-k);
+
+                return value;
+            }
+        script.
+            var editor1 = CodeMirror.fromTextArea(document.getElementById('code1'));
+            editor1.setSize("100%", "100%");
+            var editor2 = CodeMirror.fromTextArea(document.getElementById('code2'));
+            editor2.setSize("100%", "100%");

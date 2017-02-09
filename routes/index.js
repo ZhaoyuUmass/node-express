@@ -131,14 +131,14 @@ router.post('/', function (req, res) {
                                     {username: req.user.username},
                                     json
                                 );
-                                res.send(req.user.username + ".activegns.org successfully updated!");
+                                res.send(req.user.username + ".pnsanonymous.org successfully updated!");
                             } else {
-                                res.send("Unable to update record for domain " + req.user.username + ".activegns.org");
+                                res.send("Unable to update record for domain " + req.user.username + ".pnsanonymous.org");
                             }
                             db.close();
                         });
                     } else {
-                        res.send("No need to update for " + req.user.username + ".activegns.org");
+                        res.send("No need to update for " + req.user.username + ".pnsanonymous.org");
                     }
                 }
 
