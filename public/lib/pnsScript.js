@@ -53,20 +53,21 @@ const random_code = 'function run(value, accessor, querier) {\n\
     var records = value["A"]["record"];\n\
     var rand = Math.ceil(Math.random()*records.length)-1;\n\
     value["A"]["record"] = records.slice(rand, rand+1);\n\
+    return value;\n\
 }';
 
 
 const latency_code = 'function distance(lat1, lon1, lat2, lon2) {\n\
-if(lat1 == undefined || lat2 == undefined) return Number.MAX_VALUE;\n\
-var R = 6371; // Radius of the earth in km\n\
-var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below \n\
-var dLon = (lon2 - lon1) * Math.PI / 180; \n\
-var a = \n\
-    0.5 - Math.cos(dLat)/2 + \n\
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * \n\
-    (1 - Math.cos(dLon))/2; \n\
-\n\
-return R * 2 * Math.asin(Math.sqrt(a)); \n\
+    if(lat1 == undefined || lat2 == undefined) return Number.MAX_VALUE;\n\
+    var R = 6371; // Radius of the earth in km\n\
+    var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below \n\
+    var dLon = (lon2 - lon1) * Math.PI / 180; \n\
+    var a = \n\
+        0.5 - Math.cos(dLat)/2 + \n\
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * \n\
+        (1 - Math.cos(dLon))/2; \n\
+    \n\
+    return R * 2 * Math.asin(Math.sqrt(a)); \n\
 }\n\
 \n\
 function run(value, accessor, querier) {\n\
