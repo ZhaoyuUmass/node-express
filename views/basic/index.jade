@@ -1,9 +1,45 @@
-extends ../template/layout
+doctype html
+html
+  head
+    title=title
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css', rel='stylesheet', media='screen')
+    script(type="text/javascript", src="lib/codemirror.js")
+    script(type="text/javascript", src="lib/comment.js")
+    script(type="text/javascript", src="lib/continuecomment.js")
+    script(type="text/javascript", src="lib/matchbrackets.js")
+    script(type="text/javascript", src="lib/javascript.js")
+    script(type="text/javascript", src='../lib/pnsScript.js')
 
-block content
-  .container
+    link(rel='stylesheet', href='stylesheets/simple-sidebar.css')
+    link(rel="stylesheet", href="lib/codemirror.css")
+    link(rel='stylesheet', href='stylesheets/style.css')
+  body
+    if (error && error.length > 0)
+      br
+      h4.error-msg= error
+      br
     if (!user)
-      table
+      div(class="nav")
+        ul
+          if(!user)
+            li(style="float:right")
+              a(href="/register") Register
+            li(style="float:right")
+              a(href="/login") Login
+          else
+            li(style="float:right")
+              a(href="/logout") Logout
+          li
+            a(href="/") ActivePNS
+          li(class="ddown")
+            a(href="#" class="dropbtn") Document
+            div(class="ddown-content")
+              a(href="/doc/activepns") About ActivePNS
+              a(href="/doc/activecode") How-To Guide
+              a(href="/doc/activequery") API Reference
+              a(href="/doc/example") Examples
+      table(align="center")
         tr
           td
             //'Comic Sans MS', cursive, sans-serif
@@ -16,34 +52,98 @@ block content
           td
             img(src="images/activepns.png", style="width:100%;height:100%;padding:5px;")
     if (user)
-      p.h4 Hello #{user.username}
+      //p.h4 Hello #{user.username}
       //h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
-      h6
-      hr
-      div(class="inline-div")
-        p.h4(align="left") A record
-        br
-        textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
-          #{record}
-        p.h5 IPv4 address. Enter multiple addresses on separate lines.
-        p.h5 Example:
-        ul.h6 192.0.2.23
-        ul.h6 198.51.100.234
-        button.btn.btn-default(type='submit', onclick="onRecordClick()") Submit Record
+      //h6
+      //hr
+      div(id="wrapper")
+        div(id="sidebar-wrapper")
+          ul(class="sidebar-navi navi navi-tabs" id="sidebar-nav")
+            li(class="sidebar-brand")
+              a(href="#welcome") Record & Code
+            li(class="active")
+              a(href="#tab-code") Code
+            li
+              a(href="#create-field") Create fields
+            li
+              a(href="#record-a") A
+            li
+              a(href="#record-mx") MX
+            li
+              a(href="#record-cname") CNAME
+            li
+              a(href="#record-ns") NS
+            li(class="sidebar-brand")
+              a(href="/logout") Logout
 
-      div(class="inline-div")
-        p.h4 Active Code (Javascript)
-        br
-        textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
-          #{code}
-        p.h5 Examples:
-        select(id="codeExamples", class="optgroup", onchange="onChange();") Examples
-          option.h5(value="noop" selected) No-op
-          option.h5(value="random") Random
-          option.h5(value="latency") Latency-based
-        br
-        br
-        button.btn.btn-default(type='submit' onclick="onCodeClick()") Submit Code
+        div(class="tab-content")
+          div(class="tab-pane active" id="tab-code")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 Active Code (Javascript)
+                  textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
+                    #{code}
+                  p.h5 Examples:
+                  select(id="codeExamples", class="optgroup", onchange="onChange();") Examples
+                    option.h5(value="none") None
+                    option.h5(value="noop") No-op
+                    option.h5(value="random") Random
+                    option.h5(value="latency") Latency-based
+                  br
+                  br
+                  button.btn.btn-default(type='submit' onclick="onCodeClick()") Submit Code
+
+          div(class="tab-pane fade" id="welcome")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 Account
+                  p summary
+
+          div(class="tab-pane fade" id="record-a")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 A Record
+                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                    #{record}
+                  p.h5 IPv4 address. Enter multiple addresses on separate lines.
+                  p.h5 Example:
+                  ul.h6 192.0.2.23
+                  ul.h6 198.51.100.234
+                  button.btn.btn-default(type='submit', onclick="onRecordClick()") Submit Record
+
+          div(class="tab-pane fade" id="create-field")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 Create Fields
+                  p Comming soon...
+
+          div(class="tab-pane fade" id="record-mx")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 MX Record
+                  p Comming soon...
+
+          div(class="tab-pane fade" id="record-cname")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 CNAME Record
+                  p Comming soon...
+
+          div(class="tab-pane fade" id="record-ns")
+            div(class="container-fluid")
+              div(class="row")
+                div(class="col-lg-12")
+                  h1 NS Record
+                  p Comming soon...
+
+      script(type="text/javascript", src='http://code.jquery.com/jquery.js')
+      script(type="text/javascript", src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
       script.
         var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
           lineNumbers: true,
@@ -51,3 +151,18 @@ block content
           continueComments: "Enter",
           extraKeys: {"Ctrl-Q": "toggleComment"}
         });
+        $('#sidebar-nav a').click(function (e) {
+          if($(e.target).attr('href').localeCompare("/logout") != 0) {
+            e.preventDefault();
+          }
+          $(this).tab('show');
+          //alert("Gocha:"+$(e.target).attr('href'));
+          if($(e.target).attr('href').localeCompare("#tab-code") == 0) {
+            alert("Gocha");
+            editor.refresh();
+            $('#code').click();
+          }
+        });
+
+
+
