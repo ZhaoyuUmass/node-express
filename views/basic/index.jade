@@ -60,11 +60,13 @@ html
         div(id="sidebar-wrapper")
           ul(class="sidebar-navi navi navi-tabs" id="sidebar-nav")
             li(class="sidebar-brand")
-              a(href="#welcome") Record & Code
+              a(href="#welcome") Code & Record
+            li
+              a(href="#welcome") Account
             li(class="active")
               a(href="#tab-code") Code
             li
-              a(href="#create-field") Create fields
+              a(href="#create-field") Create Fields
             li
               a(href="#record-a") A
             li
@@ -74,7 +76,7 @@ html
             li
               a(href="#record-ns") NS
             li(class="sidebar-brand")
-              a(href="/logout") Logout
+              a(href="/logout" style="color:white;font-size:28px") Logout
 
         div(class="tab-content")
           div(class="tab-pane active" id="tab-code")
@@ -98,49 +100,79 @@ html
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
-                  h1 Account
-                  p summary
+                  h1 Account Information
+                  table(style="width: 500px;font-size:20px; font-family: 'Times New Roman', Times, serif")
+                    tr
+                    td
+                      b Account:
+                    td #{user.username}
+                    tr
+                    td
+                      b Subdomain:
+                    td #{user.username}.pnsanonymous.org
 
           div(class="tab-pane fade" id="record-a")
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
-                  h1 A Record
+                  h1 A Record(IPv4 Address)
                   textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
                     #{record}
                   p.h5 IPv4 address. Enter multiple addresses on separate lines.
                   p.h5 Example:
-                  ul.h6 192.0.2.23
-                  ul.h6 198.51.100.234
-                  button.btn.btn-default(type='submit', onclick="onRecordClick()") Submit Record
+                  ul.h6 1.1.1.1
+                  ul.h6 2.2.2.2
+                  button.btn.btn-default(type='submit', onclick="onRecordClick()") Save Change
 
           div(class="tab-pane fade" id="create-field")
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
                   h1 Create Fields
-                  p Comming soon...
+                  p Coming soon...
+                  table(id="field_table" style="width:200px")
 
           div(class="tab-pane fade" id="record-mx")
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
-                  h1 MX Record
-                  p Comming soon...
+                  h1 MX Record(Mail Exchange)
+                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                    #{mx}
+                  p.h5 A priority and a domain name that specifies a mail server. Enter multiple values on separate lines.
+                  p.h5 Format:
+                    li(style="list-style: none;") [priority] [mail server host name]
+                  p.h5 Example:
+                  ul.h6 10 mailserver.example.com.
+                  ul.h6 20 mailserver2.example.com.
+                  button.btn.btn-default(type='submit', onclick="onMXClick()") Save Change
 
           div(class="tab-pane fade" id="record-cname")
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
-                  h1 CNAME Record
-                  p Comming soon...
+                  h1 CNAME Record(Canonical Name)
+                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                    #{cname}
+                  p.h5 The domain name that you want to resolve to instead of the value in the Name filed
+                  p.h5 Example:
+                  ul.h6 www.example.com
+                  button.btn.btn-default(type='submit', onclick="onCNAMEClick()") Save Change
 
           div(class="tab-pane fade" id="record-ns")
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
                   h1 NS Record
-                  p Comming soon...
+                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                    #{ns}
+                  p The domain name of a name server. Enter multiple name servers on separate lines.
+                  p.h5 Example:
+                  ul.h6 ns1.example.com
+                  ul.h6 ns2.example.org
+                  ul.h6 ns3.example.fr
+                  ul.h6 ns4.example.net
+                  button.btn.btn-default(type='submit', onclick="onNSClick()") Save Change
 
       script(type="text/javascript", src='http://code.jquery.com/jquery.js')
       script(type="text/javascript", src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
@@ -158,7 +190,6 @@ html
           $(this).tab('show');
           //alert("Gocha:"+$(e.target).attr('href'));
           if($(e.target).attr('href').localeCompare("#tab-code") == 0) {
-            alert("Gocha");
             editor.refresh();
             $('#code').click();
           }
