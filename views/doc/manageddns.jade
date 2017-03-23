@@ -36,7 +36,7 @@ block content
             p
                 | Use our example to create an A record for a domain on the managed DNS server:
             pre.minicom
-                |bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \\
+                |bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \
                 |-Ddomain=example.com -Drecord_file=conf/activeCode/records edu.umass.cs.gnsserver.gnamed.CreateDNSRecordExample
             p
                 | The domain name being created is example.com, its record is in the file
@@ -183,7 +183,7 @@ block content
                 br
                 | node bin/www
             p
-                | You can use your browser to connect to the front-end and create record for subdomains of pnsanonymous.org, the detail can be found at 
+                | You can use your browser to connect to the front-end and create record for subdomains of pnsanonymous.org, the detail can be found at
                 a(href="http://pnsanonymous.org/doc") our online document.
                 | Or you could write your own GNS client to make change to the name servers.
 
