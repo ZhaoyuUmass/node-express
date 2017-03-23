@@ -156,11 +156,36 @@ block content
                 | Next make the similar change as described above on the other two nodes and run the server.
 
             p
-                | We provide a proxy to create the A record and NS record on the three name servers, you could simply run it on your local machine:
+                | We provide a proxy to create the A record and NS record on the three name servers, you could simply run it on your local machine
+            b (do not forget to change the config file for the proxy as well, otherwise the client has no idea about where the name servers are):
             pre.minicom
                 | bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties edu.umass.cs.gnsserver.gnamed.ManagedDNSServiceProxy
             p
-                | The data
+                | Now use nslookup to look up pnsanonymous.org without specifying a name server:
+            pre.minicom
+                | nslookup pnsanonymous.org
+            p
+                | The result should contain the following record:
+            pre
+                | ...
+                | Name:    pnsanonymous.org
+                | Address: 52.37.209.19
+            p
+                | in which 52.37.209.19 is specified in another config file "conf/activeCode/records".
+
+            br
+            p
+                | We have a front-end can be used to interact with GNS managed DNS server, please check out the code(make sure you have node and mongoDB installed):
+            pre.minicom
+                | git clone https://github.com/ZhaoyuUmass/node-express
+                br
+                | cd node-express
+                br
+                | node bin/www
+            p
+                | You can use your browser to connect to the front-end and create record for subdomains of pnsanonymous.org, the detail can be found at 
+                a(href="http://pnsanonymous.org/doc") our online document.
+                | Or you could write your own GNS client to make change to the name servers.
 
 
 
