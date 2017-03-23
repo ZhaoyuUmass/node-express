@@ -1,0 +1,44 @@
+//
+   Created by gaozy on 3/22/17.
+
+extends ../template/doc
+
+block content
+    .container
+        h1 Local Name Server
+        hr
+        br
+        p
+            | This page describes how to run GNS as a local name server.
+
+        div(style="font-family: 'Raleway',sans-serif; padding:5px;")
+            h3 1. Preparation
+            p
+                | First, you need to make sure GNS is runnable on your system, please check out
+                a(href="https://mobilityfirst.github.io/documentation/") Getting Started | Global Name Service.
+                | Then please download our source code and build (make sure you have git and ant installed):
+            pre.minicom
+                |git clone https://github.com/ZhaoyuUmass/ActiveGNS
+                br
+                |cd ActiveGNS
+                br
+                |ant
+
+
+            h3 2. Run GNS as a recursive name server
+            p
+                | Run GNS locally as a recursive name server with our script(here, you need administrator privilege as the name server needs to bind to port 53):
+            pre.minicom
+                | sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.properties restart all
+            p
+                | Now a recursive local name server is running on your local machine
+                | . Change the address in the config file if you need to run it remotely.
+            p
+                | To shutdown the server, simply use the command
+            pre.minicom
+                | sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.properties stop all
+            h3 3. Change your local DNS name server to GNS
+            p
+                | Next, you need to change your DNS server settings on you local machine. For example
+                | , if you use a Mac, you may want to follow this instruction to change your DNS server settings on your laptop:
+            a(href="http://osxdaily.com/2015/12/05/change-dns-server-settings-mac-os-x/") How to Change DNS Server Settings in Mac OS X

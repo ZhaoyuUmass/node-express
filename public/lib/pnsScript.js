@@ -17,6 +17,22 @@ function onRecordClick() {
     });
 }
 
+function onMXClick() {
+    var mx = $("#mx").val();
+    $.post("/", { mx: mx, action:"mx"}, function(result){
+       window.alert(result);
+        $("h6").text(result);
+    });
+}
+
+function onNSClick() {
+
+}
+
+function onCNAMEClick() {
+
+}
+
 function onTestClick() {
     var code = editor.getValue(); //$("#code").val();
     var accessor = $("#accessor").val();

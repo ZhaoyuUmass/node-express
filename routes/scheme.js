@@ -8,16 +8,10 @@ router.get('/:page', function(req, resp){
     var query = req.params.page;
     switch(query){
         case "myxdns":
-            resp.render('myxdns');
+            resp.render('scheme/myxdns');
             break;
         case "donar":
-            resp.render('donar');
-            break;
-        case "nakika":
-            resp.render('nakika');
-            break;
-        case "cost":
-            resp.render('cost');
+            resp.render('scheme/donar');
             break;
         default:
             resp.send('Page not found!');

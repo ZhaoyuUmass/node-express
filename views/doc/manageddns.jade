@@ -1,0 +1,166 @@
+//
+   Created by gaozy on 3/22/17.
+
+
+extends ../template/doc
+
+block content
+    .container
+        h1 Managed DNS Service
+        hr
+        br
+        p
+            | This page describes how to run GNS as a managed DNS service. We'll go step by step: first, you need
+            | to try to run it locally to get a sense of how it works as a managed DNS server, then you could start
+            | config GNS properly to run it as a real managed DNS service with the support of our proxy and front-end.
+
+        div(style="font-family: 'Raleway',sans-serif; padding:5px;")
+            h3 1. Preparation
+            p
+                | First, you need to make sure GNS is runnable on your system, please check out
+                a(href="https://mobilityfirst.github.io/documentation/") Getting Started | Global Name Service.
+                | Then please download our source code and build (make sure you have git and ant installed):
+            pre.minicom
+                |git clone https://github.com/ZhaoyuUmass/ActiveGNS
+                br
+                |cd ActiveGNS
+                br
+                |ant
+
+
+            h3 2. Run it locally
+            p
+                | Run GNS locally as a managed DNS server with our script(here, you need administrator privilege as the name server needs to bind to port 53):
+            pre.minicom
+                | sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties restart all
+            p
+                | Use our example to create an A record for a domain on the managed DNS server:
+            pre.minicom
+                |bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties \\
+                |-Ddomain=example.com -Drecord_file=conf/activeCode/records edu.umass.cs.gnsserver.gnamed.CreateDNSRecordExample
+            p
+                | The domain name being created is example.com, its record is in the file
+                i conf/activeCode/records
+                | . Use nslookup to check the A record for example.com:
+            pre.minicom
+                | nslookup example.com 127.0.0.1
+            p
+                | The last parameter "127.0.0.1" specifies name server on your local machine. It should return the result as:
+            pre
+                |  Server:  127.0.0.1
+                | Address:  12.0.0.1#53
+                br
+                br
+                |Non-authoritative answer:
+                |Name:    example.com
+                |Address: 52.37.209.19
+            p
+                | To shutdown the server, simply use the command
+            pre.minicom
+                | sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties stop all
+            p
+                | 52.37.209.19 is the record in our record file "conf/activeCode/records".
+                | Try to modify the record by adding or changing the addresses in the record file to see the new result
+                | , each IPv4 address must be listed in a separate line.
+            br
+            p
+                | Until now we have been running our example successfully on our local machine
+                | , next let's get it running as a real managed DNS service on the Internet.
+
+            h3 3. Get a domain name
+            p
+                | The first thing you must do is to purchase a real domain name owned by yourself
+                | . We recommend you to buy it through
+                a(href="https://aws.amazon.com/route53/")  Amazon Route 53
+                |  as we provide documents below on how to glue GNS managed DNS with your domain name.
+
+            h3 4. Glue your domain name with GNS
+            p
+                | Before glue your domain name and our managed DNS server, you need to
+                | make sure you have at least two servers to run as your domain's name server.
+                | For example, we 3 name servers to serve our domain name "pnsanonymous.org" at
+            pre
+                |52.43.241.146
+                |52.203.144.175
+                |52.14.84.6
+            p
+                | Suppose you have at least two name servers to serve your domain name,
+                | now you can glue your
+                | domain with the managed DNS server by following the doc provided by Amazon:
+                a(href="http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-name-servers-glue-records.html") http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-name-servers-glue-records.html
+                |. Notice this change may take a while to be effective. After it is done, change your NS record through your Route 53
+                | control panel and create the corresponding A record for your name servers. For example
+                | , the change we made on "pnsanonymous.org" looks like:
+            img(src="../images/route53.png", style="width:40%;height:40%;")
+            h3 5. Config GNS and run your own managed DNS service
+            p
+                | We use our domain name "pnganounymous.org" as an example to illustrate how to config GNS and run it as a
+                | managed DNS service.
+            p
+                | As you may notice in the local server example, we specify a config file "conf/activeCode/gnsserver.1local.withDNS.properties" when we start running GNS managed DNS server.
+                | This GNS config file is specified through a "-D" option called "gigapaxosConfig", if you are still not familiar with it, we recommend you to go through
+                a(href="https://mobilityfirst.github.io/documentation/") Getting Started | Global Name Service
+                |  again to understand how it works.
+            p
+                | In the config file "conf/activeCode/gnsserver.1local.withDNS.properties", there are a few lines being commented
+            pre
+                | ...
+                | #active.GNSApp3.1=52.44.1.207:24403
+                | #active.GNSApp3.2=52.43.241.146:25403
+                | #active.GNSApp3.3=52.57.120.58:26403
+                br
+                br
+                | #reconfigurator.RC3.1=52.44.1.207:2178
+                | #reconfigurator.RC3.2=52.43.241.146:2188
+                | #reconfigurator.RC3.3=52.57.120.58:2198
+                | ...
+            p
+                | please comment them out. Then remove the two lines used in the local server example:
+            pre
+                | ...
+                | active.GNSApp1=127.0.0.1:24403
+                br
+                br
+                | reconfigurator.reconfigurator1=127.0.0.1:2178
+                | ...
+            p
+                | You need to make this change on each name server (i.e., 52.44.1.207, 52.43.241.146, and 52.57.120.58 in this case).
+            p
+                | Now let's focus on a single server, 52.44.1.207, the change can be applied to the other two.
+                | First, change the name of DNS_SERVER_NODES in the config file to the corresponding app name of the node, i.e., GNSApp3.1 for 52.44.1.207,
+            pre
+                | ...
+                | DNS_SERVER_NODES=GNSApp3.1
+                | ...
+            p
+                | To run the managed DNS server on 52.44.1.207, please specify the apps on the node to run in the command:
+            pre.minicom
+                | sudo bin/gpServer.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties restart GNSApp3.1 RC3.1
+            p
+                | Note if you are using EC2 for your name server, you may also need to change the public address to private address in the config file
+                | . It is because EC2 does not allow user to bind to public address with administrator privilege. The config file after this change looks as
+            pre
+                | ...
+                | #active.GNSApp3.1=172.31.20.198:24403
+                | #active.GNSApp3.2=52.43.241.146:25403
+                | #active.GNSApp3.3=52.57.120.58:26403
+                br
+                br
+                | #reconfigurator.RC3.1=172.31.20.198:2178
+                | #reconfigurator.RC3.2=52.43.241.146:2188
+                | #reconfigurator.RC3.3=52.57.120.58:2198
+                | ...
+            p
+                | where 172.31.20.198 is the private address for 52.44.1.207.
+            p
+                | Next make the similar change as described above on the other two nodes and run the server.
+
+            p
+                | We provide a proxy to create the A record and NS record on the three name servers, you could simply run it on your local machine:
+            pre.minicom
+                | bin/gpClient.sh -DgigapaxosConfig=conf/activeCode/gnsserver.1local.withDNS.properties edu.umass.cs.gnsserver.gnamed.ManagedDNSServiceProxy
+            p
+                | The data
+
+
+

@@ -42,7 +42,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/test', test);
 app.use('/doc', document);
-//app.use('/scheme', scheme);
+app.use('/scheme', scheme);
 //app.use('/acl', acl);
 
 // passport config

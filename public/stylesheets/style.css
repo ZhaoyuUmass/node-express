@@ -209,7 +209,7 @@ hr {
   border-bottom: 1px solid black;
   border-right: 1px solid;
   width: 600px;
-  height: 450px;
+  height: 420px;
 }
 
 .example .CodeMirror {
@@ -223,7 +223,7 @@ pre.minicom {
   font-size: 10pt;
   white-space: pre;
   color: black;
-  background-color: lightgrey;
+  background-color: #e8e8e8;
   margin-left:30px;
   margin-right:30px;
   border-top: 1px dashed black;

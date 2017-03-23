@@ -19,6 +19,12 @@ router.get('/:page', function(req, resp){
         case "example":
             resp.render('doc/example');
             break;
+        case "manageddns":
+            resp.render('doc/manageddns');
+            break;
+        case "localnameserver":
+            resp.render('doc/localnameserver');
+            break;
         default:
             resp.render('doc/activepns');
             break;
