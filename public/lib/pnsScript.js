@@ -19,6 +19,7 @@ function onRecordClick() {
 
 function onMXClick() {
     var mx = $("#mx").val();
+    window.alert("ready to update mx:"+mx);
     $.post("/", { mx: mx, action:"mx"}, function(result){
        window.alert(result);
         $("h6").text(result);
@@ -26,11 +27,29 @@ function onMXClick() {
 }
 
 function onNSClick() {
-
+    var ns = $("#ns").val();
+    window.alert("ready to update ns:"+ns);
+    $.post("/", { ns: ns, action:"ns"}, function(result){
+        window.alert(result);
+        $("h6").text(result);
+    });
 }
 
 function onCNAMEClick() {
+    var cname = $("#cname").val();
+    $.post("/", {cname: cname, action:"cname"}, function(result){
+        window.alert(result);
+        $("h6").text(result);
+    });
+}
 
+function onFiledClick() {
+    // FIXME: this needs to update based on the UI desgin
+    var field = $("#field").val();
+    $.post("/", {field:field, action:"field"}, function(result){
+       window.alert(result);
+        $("h6").text(result);
+    });
 }
 
 function onTestClick() {

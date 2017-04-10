@@ -14,6 +14,7 @@ html
     link(rel='stylesheet', href='stylesheets/simple-sidebar.css')
     link(rel="stylesheet", href="lib/codemirror.css")
     link(rel='stylesheet', href='stylesheets/style.css')
+
   body
     if (error && error.length > 0)
       br
@@ -50,7 +51,7 @@ html
               | ActivePNS is a programmable managed DNS service. You can write Javascript code to define your own routing
               | scheme for your A record hosted by ActivePNS. Try out by registering your account first.
           td
-            img(src="images/activepns.png", style="width:100%;height:100%;padding:5px;")
+            img(class="center fit", src="images/activepns.png", style="padding:5px;")
     if (user)
       //p.h4 Hello #{user.username}
       //h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
@@ -138,11 +139,11 @@ html
               div(class="row")
                 div(class="col-lg-12")
                   h1 MX Record(Mail Exchange)
-                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                  textarea(type="text", id="mx", style="height:200px;width:200px;font-size:10pt;").
                     #{mx}
                   p.h5 A priority and a domain name that specifies a mail server. Enter multiple values on separate lines.
                   p.h5 Format:
-                    li(style="list-style: none;") [priority] [mail server host name]
+                    li(style="list-style: none;") [priority] [mail server host name] [ip address(optional)]
                   p.h5 Example:
                   ul.h6 10 mailserver.example.com.
                   ul.h6 20 mailserver2.example.com.
@@ -153,7 +154,7 @@ html
               div(class="row")
                 div(class="col-lg-12")
                   h1 CNAME Record(Canonical Name)
-                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                  textarea(type="text", id="cname", style="height:200px;width:200px;font-size:10pt;").
                     #{cname}
                   p.h5 The domain name that you want to resolve to instead of the value in the Name filed
                   p.h5 Example:
@@ -165,14 +166,16 @@ html
               div(class="row")
                 div(class="col-lg-12")
                   h1 NS Record
-                  textarea(type="text", id="record", style="height:200px;width:200px;font-size:10pt;").
+                  textarea(type="text", id="ns", style="height:200px;width:200px;font-size:10pt;").
                     #{ns}
-                  p The domain name of a name server. Enter multiple name servers on separate lines.
+                  p Enter multiple name servers on separate lines with the ip address of the name server (optionally)
+                  p.h5 Format:
+                    li(style="list-style: none;") [name server host name] [ip address(optional)]
                   p.h5 Example:
-                  ul.h6 ns1.example.com
-                  ul.h6 ns2.example.org
-                  ul.h6 ns3.example.fr
-                  ul.h6 ns4.example.net
+                  ul.h6 ns1.example.com 1.1.1.1
+                  ul.h6 ns2.example.org 2.2.2.2
+                  ul.h6 ns3.example.fr 3.3.3.3
+                  ul.h6 ns4.example.net 4.4.4.4
                   button.btn.btn-default(type='submit', onclick="onNSClick()") Save Change
 
       script(type="text/javascript", src='http://code.jquery.com/jquery.js')
@@ -195,6 +198,3 @@ html
             $('#code').click();
           }
         });
-
-
-

@@ -9,9 +9,18 @@ var MongoClient = mongodb.MongoClient;
 var db_url = 'mongodb://localhost:27017/passport_local_mongoose_express4';
 
 const UPDATE_CODE = "update_code",
-    UPDATE_RECORD = "update_record",
     REMOVE_CODE = "remove_code",
-    DELETE_RECORD = "delete_record";
+    UPDATE_RECORD = "update_record",
+    DELETE_RECORD = "delete_record",
+    UPDATE_FIELD = "update_field",
+    DELETE_FIELD = "delete_field",
+    UPDATE_MX = "update_mx",
+    DELETE_MX = "delete_mx",
+    UPDATE_NS = "update_ns",
+    DELETE_NS = "delete_ns",
+    UPDATE_CNAME = "update_cname",
+    DELETE_CNAME = "delete_cname";
+
 
 const LOGIN = 'basic/login',
     REGISTER = 'basic/register',
@@ -35,11 +44,19 @@ router.get('/', function (req, res) {
                         });
                     }else{
                         var code = results[0].code;
-                        var record = results[0].record;
+                        var record = results[0].record,
+                            mx = results[0].mx,
+                            ns = results[0].ns,
+                            cname = results[0].cname;
+                        var fields = results[0].fields;
                         var json = {
                             user: req.user,
                             code: code,
-                            record: record
+                            record: record,
+                            mx: mx,
+                            ns: ns,
+                            cname: cname,
+                            fields:fields
                         };
                         res.render(INDEX, json);
                     }
@@ -55,10 +72,9 @@ router.get('/', function (req, res) {
 router.post('/', function (req, res) {
     var query = req.body.action,
         username = req.user.username,
-        action = null,
-        record = req.body.record,
-        code = req.body.code;
+        action = null;
 
+    //console.log("POST handler receives a request:"+JSON.stringify(req));
     // Fetch the record from db first
     MongoClient.connect(db_url, function(err, db){
         if(err){
@@ -78,16 +94,16 @@ router.post('/', function (req, res) {
                     });
                     db.close();
                 }else {
+                    console.log("This is the record retrieved from DB:"+JSON.stringify(results[0]));
                     var guid = results[0].guid;
-                    var currentCode = results[0].code;
-                    var currentRecord = results[0].record;
                     var toUpdate = true;
 
                     // now let's check whether it's necessary to update
                     switch(query) {
                         case "code":
+                            var currentCode = results[0].code;
+                            var code = req.body.code;
                             // currentCode != code, then it needs to update
-                            record = currentRecord;
                             if (currentCode.localeCompare(code) != 0) {
                                 if (code.localeCompare("") == 0) {
                                     action = REMOVE_CODE;
@@ -99,14 +115,78 @@ router.post('/', function (req, res) {
                             }
                             break;
                         case "record":
-                            code = currentCode;
+                            var currentRecord = results[0].record;
+                            var record = req.body.record;
+                            // currentRecord != record, then it needs to update
                             if (currentRecord.localeCompare(record) != 0) {
                                 if (record.localeCompare("") == 0) {
                                     action = DELETE_RECORD;
                                 } else {
                                     action = UPDATE_RECORD;
                                 }
-                            } else{
+                            } else {
+                                toUpdate = false;
+                            }
+                            break;
+                        case "field":
+                            // The currentFields is a map containing all fields
+                            var currentFields = results[0].fields;
+                            // There is only one field to be update
+                            var field = req.body.field;
+                            var value = req.body.value;
+                            // if the currentFields does not contain the field, then it needs to update
+                            if (currentFields.hasOwnProperty(field)){
+                                if(value.localeCompare("") ==  0){
+                                    action = DELETE_FIELD;
+                                } else {
+                                    action = UPDATE_FIELD;
+                                }
+                            } else {
+                                toUpdate = false;
+                            }
+                            break;
+                        case "mx":
+                            var currentMX = results[0].mx;
+                            var mx = req.body.mx;
+
+                            // currentMX != mx, then it needs to update
+                            if(currentMX.localeCompare(mx) != 0) {
+                                if(mx.localeCompare("") == 0){
+                                    action = DELETE_MX;
+                                } else {
+                                    action = UPDATE_MX;
+                                }
+                            } else {
+                                toUpdate = false;
+                            }
+                            break;
+                        case "ns":
+                            var currentNS = results[0].ns;
+                            var ns = req.body.ns;
+
+                            console.log("ns is "+ns+", and currentNS is "+currentNS);
+                            // currentNS != ns, then it needs to update
+                            if(currentNS.localeCompare(ns) != 0){
+                                if(ns.localeCompare("") == 0){
+                                    action = DELETE_NS;
+                                } else {
+                                    action = UPDATE_NS;
+                                }
+                            } else {
+                                toUpdate = false;
+                            }
+                            break;
+                        case "cname":
+                            var currentCNAME = results[0].cname;
+                            var cname = req.body.cname;
+                            // currentCNAME != cname, then it needs to update
+                            if(currentCNAME.localeCompare(cname) != 0){
+                                if(cname.localeCompare("") == 0) {
+                                    action = DELETE_CNAME;
+                                } else {
+                                    action = UPDATE_CNAME;
+                                }
+                            } else {
                                 toUpdate = false;
                             }
                             break;
@@ -115,25 +195,28 @@ router.post('/', function (req, res) {
                     }
 
                     if (toUpdate) {
-                        var json = {
-                            action: action,
-                            username: username,
-                            guid: guid,
-                            code: code,
-                            record: record
-                        };
+                        var response = generateResponse(action, username, guid, req);
 
-                        console.log("Construct request:" + JSON.stringify(json));
+                        console.log("Construct request:" + JSON.stringify(response));
 
-                        sendRequestToProxy(json, function (data) {
+                        sendRequestToProxy(response, function (data) {
                             if (data) {
+                                // If it's an operation on field, we need to update the fields to include the new key-value pair into the json object
+                                if(action.localeCompare(UPDATE_FIELD) == 0 ||
+                                    action.localeCompare(DELETE_FIELD) == 0){
+                                    response.fields = results[0].fields;
+                                    var field = req.body.field,
+                                        value = req.body.value;
+                                    response.fields[field] = value;
+                                }
                                 collection.update(
                                     {username: req.user.username},
-                                    json
+                                    {$set: response}
                                 );
                                 res.send(req.user.username + ".pnsanonymous.org successfully updated!");
                             } else {
-                                res.send("Unable to update record for domain " + req.user.username + ".pnsanonymous.org");
+                                res.send("Unable to update record for domain "
+                                    + req.user.username + ".pnsanonymous.org");
                             }
                             db.close();
                         });
@@ -149,6 +232,52 @@ router.post('/', function (req, res) {
     });
 
 });
+
+function generateResponse(action, username, guid, req){
+    var json = {
+        action: action,
+        username: username,
+        guid: guid
+    };
+    console.log("Construct JSON request before putting into action:"+JSON.stringify(json));
+    switch(action){
+        case UPDATE_CODE:
+            json.code = req.body.code;
+            break;
+        case REMOVE_CODE:
+            break;
+        case UPDATE_RECORD:
+            json.record = req.body.record;
+            break;
+        case DELETE_RECORD:
+            break;
+        case UPDATE_FIELD:
+            json.field = req.body.field;
+            json.value = req.body.value;
+            break;
+        case DELETE_FIELD:
+            json.field = req.body.field;
+            break;
+        case UPDATE_MX:
+            json.mx = req.body.mx;
+            break;
+        case DELETE_MX:
+            break;
+        case UPDATE_NS:
+            json.ns = req.body.ns;
+            break;
+        case DELETE_NS:
+            break;
+        case UPDATE_CNAME:
+            json.cname = req.body.cname;
+            break;
+        case DELETE_CNAME:
+            break;
+        default:
+            break;
+    }
+    return json;
+}
 
 function sendRequestToProxy(json, next){
 
@@ -185,10 +314,14 @@ router.post('/register', function(req, res) {
                         return res.render(REGISTER, { error: "Cannot connect to db when creating this account."});
                     }else {
                         var collection = db.collection('users');
-                        json.guid = data.guid;
                         // no code and no record for the domain
                         json.code = "";
                         json.record = "";
+                        json.fields = {};
+                        json.mx = "";
+                        json.ns = "";
+                        json.cname = "";
+                        json.guid = data.guid;
                         collection.insert([json], function (err, result) {
                             if (err) {
                                 console.log(err);
@@ -247,7 +380,6 @@ router.get('/logout', function(req, res, next) {
 router.get('/ping', function(req, res){
     res.status(200).send("pong!");
 });
-
 
 
 module.exports = router;
