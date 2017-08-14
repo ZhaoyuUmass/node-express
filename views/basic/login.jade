@@ -1,17 +1,12 @@
 extends ../template/simple
-
 block content
-  .container
-    h1 Login Page
-    p.lead Welcome to ActiveGNS.
-    br
-    form(role='form', action="/login",method="post", style='max-width: 300px;')
-      .form-group
-          input.form-control(type='text', name="username", placeholder='Enter Username')
-      .form-group
-        input.form-control(type='password', name="password", placeholder='Password')
-      span(style="padding:1%")
-        button.btn.btn-default(type='submit') Submit
-      span(style="padding:1%")
-        a(href='/')
-          button.btn.btn-primary(type="button") Cancel
+  include account
+
+block scripts
+  script(src='/vendor/jquery-2.2.3.min.js')
+  script(src='/vendor/jquery.form.min.js')
+  script(src='/vendor/bootstrap.min.js')
+  script(src='/js/views/login.js')
+  script(src='/js/controllers/loginController.js')
+  script(src='/js/form-validators/loginValidator.js')
+  script(src='/js/form-validators/emailValidator.js')

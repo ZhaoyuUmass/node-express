@@ -21,43 +21,9 @@ html
       h4.error-msg= error
       br
     if (!user)
-      div(class="nav")
-        ul
-          if(!user)
-            li(style="float:right")
-              a(href="/register") Register
-            li(style="float:right")
-              a(href="/login") Login
-          else
-            li(style="float:right")
-              a(href="/logout") Logout
-          li
-            a(href="/") ActivePNS
-          li(class="ddown")
-            a(href="#" class="dropbtn") Document
-            div(class="ddown-content")
-              a(href="/doc/activepns") About ActivePNS
-              a(href="/doc/activecode") How-To Guide
-              a(href="/doc/activequery") API Reference
-              a(href="/doc/example") Examples
-      table(align="center")
-        tr
-          td
-            //'Comic Sans MS', cursive, sans-serif
-            //Verdana, Geneva, sans-serif
-            div(style="border:solid 2px #f45342; font-family: 'Comic Sans MS', cursive, sans-serif; background:#ffffff;color:#4286f4; width:400px;height:400px;padding:5px;")
-              h1(style="font-size: 40px; font-weight: 800;") ActivePNS
-              div(style="font-size: 24px; font-weight: 800;")
-              | ActivePNS is a programmable managed DNS service. You can write Javascript code to define your own routing
-              | scheme for your A record hosted by ActivePNS. Try out by registering your account first.
-          td
-            img(class="center fit", src="images/activepns.png", style="padding:5px;")
+      include ../nav
+      include intro
     if (user)
-      //p.h4 Hello #{user.username}
-      //h4 The subdomain "#{user.username}.activegns.org" has been assigned to you, you can create your A record and define your own policy on it
-      //h6
-      //hr
-
       div(id="wrapper")
         div(id="sidebar-wrapper")
           ul(class="sidebar-navi navi navi-tabs" id="sidebar-nav")

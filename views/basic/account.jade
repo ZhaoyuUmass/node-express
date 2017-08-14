@@ -1,0 +1,35 @@
+//
+   Created by gaozy on 8/11/17.
+
+.container
+    table
+        tr
+            td
+                form(role='form', action="/login",method="post", style='width: 350px; height: 450px;')#login.well
+                    h2 Hello!
+                    h6 Please Login To Your Account
+                    .form-group
+                        label Username
+                        input.form-control#name-login(type='text', name="user", placeholder='Enter Username')
+                    .form-group
+                        label Password
+                        input.form-control#name-password(type='password', name="pass", placeholder='Password')
+                    button.btn.btn-default(class='btnstyle', type="button")
+                        span(style="padding:1%")
+                            a(href='/') Cancel
+                    button.btn.btn-primary.button-sign-in(class='btnstyle', type='submit')
+                        span(style="padding:1%").glyphicon.glyphicon-lock
+                        |Sign In
+                    .clearfix
+                    hr
+                    .btm-links
+                        #forgot-password
+                            a( href='#', style='float: left; margin-left: 10px;') Forgot Your Password?
+                        #create-account
+                            a( href='/register', style='float: right; margin-left: 5px;') Create An Account
+                    .clearfix
+            td
+                img(class="center", src="images/activepns.png", style="padding: 5px")
+
+include ../modals/alert
+include ../modals/lost-password

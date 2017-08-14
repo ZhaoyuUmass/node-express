@@ -1,3 +1,7 @@
+.glyphicon {
+  margin-right: 8px;
+}
+
 .fit { /* set relative picture size */
   max-width: 100%;
   max-height: 100%;
@@ -16,7 +20,7 @@ ul.plain {
   font-size: 100%;
   width: 100%;
   overflow: hidden;
-  font: 28px "Lucida Grande", Helvetica, Arial, sans-serif;
+  /* font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; */
 }
 
 .nav ul {
@@ -24,7 +28,8 @@ ul.plain {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #00b7ff;
+  /* background-color: #00b7ff; */
+  background-color: #555;
 }
 
 .nav li {
@@ -40,7 +45,11 @@ ul.plain {
 }
 
 .nav li a:hover, .ddown:hover .dropbtn {
-  background-color: #7dd8ff;
+  background-color: #c7c7c7;
+}
+
+.nav li .active {
+  background-color: #000000;
 }
 
 .nav li.ddown {
@@ -50,9 +59,10 @@ ul.plain {
 .nav .ddown-content {
   display: none;
   position: absolute;
-  background-color: #7dd8ff;
+  /* background-color: #7dd8ff; */
+  background-color: #c7c7c7;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(125, 216, 255, 0.2);
+  box-shadow: 0px 8px 16px 0px rgb(225, 225, 255);
 }
 
 .nav .ddown-content a {
@@ -113,7 +123,7 @@ hr {
   background:#fff;
   border-radius:2px;
   padding:10px;
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
 }
 .form-style-7 h1{
   display: block;
@@ -145,7 +155,7 @@ hr {
   color: #B9B9B9;
   font-size: 12px;
   overflow: hidden;
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
 }
 .form-style-7 input[type="text"],
 .form-style-7 input[type="date"],
@@ -170,7 +180,7 @@ hr {
   line-height: 25px;
   font-size: 16px;
   padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
 }
 .form-style-7 input[type="text"]:focus,
 .form-style-7 input[type="date"]:focus,
@@ -192,7 +202,7 @@ hr {
   margin: 0 -9px -9px -9px;
   text-align: center;
   color: #C0C0C0;
-  font-family: Georgia, "Times New Roman", Times, serif;
+  /* font-family: Georgia, "Times New Roman", Times, serif; */
   font-size: 11px;
 }
 .form-style-7 textarea{
@@ -240,4 +250,8 @@ pre.minicom {
   border-right: 1px dashed black;
   border-bottom: 1px dashed black;
   padding: 10px 10px 10px 10px;
+}
+
+.btnstyle{
+  width: 150px;
 }

@@ -1,12 +1,16 @@
 var express = require('express');
 var passport = require('passport');
 var net = require('net');
-var Account = require('../models/account');
+//var Account = require('../modules/account');
 var router = express.Router();
-var mongodb = require('mongodb');
-var MongoClient = mongodb.MongoClient;
+//var mongodb = require('mongodb');
+var MongoDB 	= require('mongodb').Db;
+var Server 		= require('mongodb').Server;
 
-var db_url = 'mongodb://localhost:27017/passport_local_mongoose_express4';
+var AM = require('../modules/account-manager');
+var EM = require('../modules/email-dispatcher');
+
+
 
 const UPDATE_CODE = "update_code",
     REMOVE_CODE = "remove_code",
@@ -69,6 +73,7 @@ router.get('/', function (req, res) {
     }
 });
 
+// FIXME: move this route to some other route so that the root route doesn't have to handle post request
 router.post('/', function (req, res) {
     var query = req.body.action,
         username = req.user.username,
@@ -300,20 +305,35 @@ router.get('/register', function(req, res) {
 });
 
 router.post('/register', function(req, res) {
+    console.log('Received a request:'+req);
+    AM.addNewAccount({
+        name 	: req.body['name'],
+        email 	: req.body['email'],
+        user 	: req.body['user'],
+        pass	: req.body['pass']
+    }, function(e){
+        if (e){
+            res.status(400).send(e);
+            //res.render(REGISTER, { error: "Cannot connect to db when creating this account."});
+        }	else{
+            res.status(200).send('ok');
+            //res.redirect('/');
+        }
+    });
+    /*
     Account.register(new Account({ username : req.body.username }), req.body.password, function(err, account) {
         if (err) {
           return res.render(REGISTER, { error : err.message });
         }
 
         var json = { action:"create", username:req.body.username };
-
         sendRequestToProxy(json, function(data){
             if(data) {
                 MongoClient.connect(db_url, function(err, db){
                     if(err){
                         return res.render(REGISTER, { error: "Cannot connect to db when creating this account."});
                     }else {
-                        var collection = db.collection('users');
+                        //var collection = db.collection('users');
                         // no code and no record for the domain
                         json.code = "";
                         json.record = "";
@@ -345,11 +365,11 @@ router.post('/register', function(req, res) {
             } else {
                 return res.render(REGISTER, { error: "Cannot create this account on GNS, please try later."});
             }
-
         });
 
 
     });
+    */
 });
 
 
@@ -358,13 +378,77 @@ router.get('/login', function(req, res) {
     res.render(LOGIN, { user : req.user, error : req.flash(ERROR)});
 });
 
-router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: "The account doesn't exist or the password is incorrect" }), function(req, res, next) {
+router.post('/login', function(req, res){
+    AM.manualLogin(req.body['user'], req.body['pass'], function(e, o){
+        if (!o){
+            res.status(400).send(e);
+        }	else{
+            req.session.user = o;
+            if (req.body['remember-me'] == 'true'){
+                res.cookie('user', o.user, { maxAge: 900000 });
+                res.cookie('pass', o.pass, { maxAge: 900000 });
+            }
+            res.status(200).send(o);
+        }
+    });
+    /*
+    passport.authenticate('local', { failureRedirect: '/login', failureFlash: "The account doesn't exist or the password is incorrect" }), function(req, res, next) {
     req.session.save(function (err) {
         if (err) {
             return next(err);
         }
         res.redirect('/');
     });
+    */
+});
+
+router.post('/lost-password', function(req, res){
+    // look up the user's account via their email //
+    AM.getAccountByEmail(req.body['email'], function(o){
+        if (o){
+            EM.dispatchResetPasswordLink(o, function(e, m){
+                // this callback takes a moment to return //
+                // TODO add an ajax loader to give user feedback //
+                if (!e){
+                    res.status(200).send('ok');
+                }	else{
+                    for (k in e) console.log('ERROR : ', k, e[k]);
+                    res.status(400).send('unable to dispatch password reset');
+                }
+            });
+        }	else{
+            res.status(400).send('email-not-found');
+        }
+    });
+});
+
+router.get('/reset-password', function(req, res) {
+    var email = req.query["e"];
+    var passH = req.query["p"];
+    AM.validateResetLink(email, passH, function(e){
+        if (e != 'ok'){
+            res.redirect('/');
+        } else{
+            // save the user's email in a session instead of sending to the client //
+            req.session.reset = { email:email, passHash:passH };
+            res.render('basic/reset', { title : 'Reset Password' });
+        }
+    })
+});
+
+router.post('/reset-password', function(req, res) {
+    var nPass = req.body['pass'];
+    // retrieve the user's email from the session to lookup their account and reset password //
+    var email = req.session.reset.email;
+    // destory the session immediately after retrieving the stored email //
+    req.session.destroy();
+    AM.updatePassword(email, nPass, function(e, o){
+        if (o){
+            res.status(200).send('ok');
+        }	else{
+            res.status(400).send('unable to update password');
+        }
+    })
 });
 
 router.get('/logout', function(req, res, next) {

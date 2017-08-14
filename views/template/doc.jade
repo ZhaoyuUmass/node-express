@@ -22,19 +22,6 @@ html
             br
             h4.error-msg= error
             br
-    div(class="nav")
-        ul
-            li(style="float:right")
-                a(href="/register") Register
-            li(style="float:right")
-                a(href="/login") Login
-            li
-                a(href="/") ActivePNS
-            li(class="ddown")
-                a(href="#" class="dropbtn") Document
-                div(class="ddown-content")
-                    a(href="/doc/activepns") About ActivePNS
-                    a(href="/doc/activecode") How-To Guide
-                    a(href="/doc/activequery") API Reference
-                    a(href="/doc/example") Examples
+    include ../nav
     block content
+    block script
