@@ -13,7 +13,7 @@ EM.server = require("emailjs/email").server.connect(
 EM.dispatchResetPasswordLink = function(account, callback)
 {
 	EM.server.send({
-		from         : process.env.EMAIL_FROM || 'Node Login <do-not-reply@gmail.com>',
+		from         : process.env.EMAIL_FROM || 'PGNS Team <do-not-reply@gmail.com>',
 		to           : account.email,
 		subject      : 'Password Reset',
 		text         : 'something went wrong... :(',

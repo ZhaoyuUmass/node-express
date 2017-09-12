@@ -32,8 +32,10 @@ const LOGIN = 'basic/login',
     ERROR = 'template/error';
 
 router.get('/', function (req, res) {
-    var user = req.user;
+    console.log(req.session["user"]);
+    var user = req.session["user"];
     if(user){
+        /*
         var username = user.username;
         MongoClient.connect(db_url, function(err, db){
             if(err){
@@ -68,8 +70,10 @@ router.get('/', function (req, res) {
                 db.close();
             }
         });
+        */
+        res.render(INDEX, user);
     }else {
-        res.render(INDEX, { user : req.user });
+        res.render(INDEX, null);
     }
 });
 
@@ -238,6 +242,12 @@ router.post('/', function (req, res) {
 
 });
 
+// logout: delete user from the session
+router.get('/logout', function (req, res){
+    req.session['user'] = null;
+    res.redirect('/');
+});
+
 function generateResponse(action, username, guid, req){
     var json = {
         action: action,
@@ -373,7 +383,6 @@ router.post('/register', function(req, res) {
 });
 
 
-
 router.get('/login', function(req, res) {
     res.render(LOGIN, { user : req.user, error : req.flash(ERROR)});
 });
@@ -388,6 +397,7 @@ router.post('/login', function(req, res){
                 res.cookie('user', o.user, { maxAge: 900000 });
                 res.cookie('pass', o.pass, { maxAge: 900000 });
             }
+            console.log(JSON.stringify(o));
             res.status(200).send(o);
         }
     });

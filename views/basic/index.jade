@@ -24,15 +24,24 @@ html
       include ../nav
       include intro
     if (user)
+      div(class="nav")
+        ul
+          li(style="float:right")
+            a(href="/login")
+              span(class="glyphicon glyphicon-log-out")
+              | Logout
+          li
+            a(href="/") PGNS
+          li
+            a(href="#") Document
+
       div(id="wrapper")
         div(id="sidebar-wrapper")
           ul(class="sidebar-navi navi navi-tabs" id="sidebar-nav")
-            li(class="sidebar-brand")
-              a(href="#welcome") Code & Record
             li
               a(href="#welcome") Account
             li(class="active")
-              a(href="#tab-code") Code
+              a(href="#tab-code") Function
             li
               a(href="#create-field") Create Fields
             li
@@ -43,15 +52,13 @@ html
               a(href="#record-cname") CNAME
             li
               a(href="#record-ns") NS
-            li(class="sidebar-brand")
-              a(href="/logout" style="color:white;font-size:28px") Logout
 
         div(class="tab-content")
           div(class="tab-pane active" id="tab-code")
             div(class="container-fluid")
               div(class="row")
                 div(class="col-lg-12")
-                  h1 Active Code (Javascript)
+                  h1 User-defined Function (Javascript)
                   textarea(type="text", id="code", style="height:200px;width:300px;font-size:10pt;").
                     #{code}
                   p.h5 Examples:

@@ -68,7 +68,7 @@ exports.manualLogin = function(user, pass, callback)
 
 exports.addNewAccount = function(newData, callback)
 {
-	console.log('New data:'+newData);
+	console.log(JSON.stringify(newData));
 	accounts.findOne({user:newData.user}, function(e, o) {
 		if (o){
 			callback('username-taken');
@@ -95,7 +95,6 @@ exports.updateAccount = function(newData, callback)
 	accounts.findOne({_id:getObjectId(newData.id)}, function(e, o){
 		o.name 		= newData.name;
 		o.email 	= newData.email;
-		o.country 	= newData.country;
 		if (newData.pass == ''){
 			accounts.save(o, {safe: true}, function(e) {
 				if (e) callback(e);

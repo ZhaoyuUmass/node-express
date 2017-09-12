@@ -13,7 +13,10 @@ $(document).ready(function(){
 			}
 		},
 		success	: function(responseText, status, xhr, $form){
-			if (status == 'success') window.location.href = '/';
+			if (status == 'success') {
+				//alert(JSON.stringify(responseText));
+				window.location.href = '/';
+			}
 		},
 		error : function(e){
 			lv.showLoginError('Login Failure', 'Please check your username and/or password');

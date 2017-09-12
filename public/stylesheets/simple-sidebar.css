@@ -17,7 +17,7 @@
 }
 
 .navi-tabs>li.active>a{
-    background-color: #7dd8ff;
+    background-color: #c5c5c5;
 }
 
 #wrapper {
@@ -41,7 +41,7 @@
     margin-left: -250px;
     overflow-y: auto;
     /* background: #000;*/
-    background: #00b7ff;
+    background: #555555;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -116,7 +116,7 @@
 
 @media(min-width:768px) {
     #wrapper {
-        padding-left: 250px;
+        padding-left: 200px;
     }
 
     #wrapper.toggled {
@@ -124,7 +124,7 @@
     }
 
     #sidebar-wrapper {
-        width: 250px;
+        width: 200px;
     }
 
     #wrapper.toggled #sidebar-wrapper {
