@@ -28,6 +28,7 @@ const UPDATE_CODE = "update_code",
     UPDATE_CNAME = "update_cname",
     DELETE_CNAME = "delete_cname";
 
+const coll_name = "accounts";
 
 const LOGIN = 'basic/login',
     REGISTER = 'basic/register',
@@ -44,7 +45,7 @@ router.get('/', function (req, res) {
             if(err){
                 return res.render(ERROR, { error: "Cannot connect to db when fetching data."});
             }else {
-                var collection = db.collection('users');
+                var collection = db.collection(coll_name);
                 collection.find({username: username}).toArray(function(err, results) {
                     if(err){
                         res.render(ERROR, {
@@ -96,7 +97,7 @@ router.post('/', function (req, res) {
             });
             db.close();
         }else {
-            var collection = db.collection('users');
+            var collection = db.collection(coll_name);
 
             collection.find({username:username}).toArray(function(err, results) {
                 if(err){
