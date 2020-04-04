@@ -37,8 +37,8 @@ router.get('/', function (req, res) {
     console.log(req.session["user"]);
     var user = req.session["user"];
     if(user){
-
         var username = user.username;
+        console.log("USERNAME:"+username);
         MongoClient.connect(db_url, function(err, db){
             if(err){
                 return res.render(ERROR, { error: "Cannot connect to db when fetching data."});
@@ -46,12 +46,14 @@ router.get('/', function (req, res) {
                 var collection = db.collection(coll_name);
                 collection.find({username: username}).toArray(function(err, results) {
                     console.log("ERROR:"+err);
+                    console.log("DB:"+results);
                     if(err){
+
                         res.render(ERROR, {
                             message: err.message,
                             error: err
                         });
-                    }else{
+                    } else {
                         var code = results[0].code;
                         var record = results[0].record,
                             mx = results[0].mx,
