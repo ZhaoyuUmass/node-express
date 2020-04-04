@@ -23,7 +23,7 @@ html
     if (!user)
       include ../nav
       include intro
-    if (user)
+    else
       nav(class="navbar navbar-inverse navbar-fixed-top")
         div(class="container-fluid")
           div(class="navbar-header")
@@ -107,11 +107,11 @@ html
                         tr
                         td
                           b Account:
-                        td #{user.user}
+                        td #{user}
                         tr
                         td
                           b Subdomain:
-                        td #{user.user}.pnsanonymous.org
+                        td #{user}.pnsanonymous.org
 
               div(class="tab-pane fade" id="record-a")
                 div(class="container-fluid")
