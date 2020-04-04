@@ -38,6 +38,11 @@ app.use(flash());
 //app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+var bodyParser = require("body-parser");
+var jsonParser = bodyParser.json();
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+app.use(urlencodedParser);
+app.use(jsonParser);
 
 app.use('/', routes);
 app.use('/test', test);
