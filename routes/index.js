@@ -34,8 +34,9 @@ const LOGIN = 'basic/login',
     ERROR = 'template/error';
 
 router.get('/', function (req, res) {
-    console.log(req.session["user"]);
+    console.log("REQ:"+req.session["user"]);
     var user = req.session["user"];
+    console.log("USER:"+user);
     if(user){
         var username = user.username;
         console.log("USERNAME:"+username);
