@@ -6,6 +6,9 @@ var router = express.Router();
 //var mongodb = require('mongodb');
 var MongoDB 	= require('mongodb').Db;
 var Server 		= require('mongodb').Server;
+var MongoClient = require('mongodb').MongoClient;
+
+const db_url = "mongodb://localhost:27017/node-login";
 
 var AM = require('../modules/account-manager');
 var EM = require('../modules/email-dispatcher');
@@ -35,7 +38,7 @@ router.get('/', function (req, res) {
     console.log(req.session["user"]);
     var user = req.session["user"];
     if(user){
-        /*
+
         var username = user.username;
         MongoClient.connect(db_url, function(err, db){
             if(err){
@@ -70,7 +73,7 @@ router.get('/', function (req, res) {
                 db.close();
             }
         });
-        */
+
         res.render(INDEX, user);
     }else {
         res.render(INDEX, null);

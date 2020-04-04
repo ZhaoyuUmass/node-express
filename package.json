@@ -29,6 +29,9 @@
     "morgan": "^1.10.0",
     "serve-favicon": "^2.5.0",
     "should": "~2.1.0",
-    "stylus": "^0.54.7"
+    "stylus": "^0.54.7",
+    "mongoose": "*",
+    "passport": "*"
+
   }
 }
