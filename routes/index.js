@@ -8,12 +8,11 @@ var MongoDB 	= require('mongodb').Db;
 var Server 		= require('mongodb').Server;
 var MongoClient = require('mongodb').MongoClient;
 
-const db_url = "mongodb://localhost:27017/node-login";
+const db_url = "mongodb://127.0.0.1:27017/node-login";
+const coll_name = "accounts";
 
 var AM = require('../modules/account-manager');
 var EM = require('../modules/email-dispatcher');
-
-
 
 const UPDATE_CODE = "update_code",
     REMOVE_CODE = "remove_code",
@@ -28,7 +27,6 @@ const UPDATE_CODE = "update_code",
     UPDATE_CNAME = "update_cname",
     DELETE_CNAME = "delete_cname";
 
-const coll_name = "accounts";
 
 const LOGIN = 'basic/login',
     REGISTER = 'basic/register',
@@ -72,7 +70,7 @@ router.get('/', function (req, res) {
                         res.render(INDEX, json);
                     }
                 });
-                db.close();
+
             }
         });
 
@@ -96,7 +94,7 @@ router.post('/', function (req, res) {
                 message: err.message,
                 error: err
             });
-            db.close();
+            // db.close();
         }else {
             var collection = db.collection(coll_name);
 
@@ -106,7 +104,7 @@ router.post('/', function (req, res) {
                         message: err.message,
                         error: err
                     });
-                    db.close();
+                    // db.close();
                 }else {
                     console.log("This is the record retrieved from DB:"+JSON.stringify(results[0]));
                     var guid = results[0].guid;
@@ -232,7 +230,7 @@ router.post('/', function (req, res) {
                                 res.send("Unable to update record for domain "
                                     + req.user.username + ".pnsanonymous.org");
                             }
-                            db.close();
+                            // db.close();
                         });
                     } else {
                         res.send("No need to update for " + req.user.username + ".pnsanonymous.org");
@@ -374,7 +372,7 @@ router.post('/register', function(req, res) {
                         });
                     }
 
-                    db.close();
+                    // db.close();
                 });
 
             } else {
