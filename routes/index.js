@@ -325,7 +325,7 @@ router.post('/register', function(req, res) {
         if (e){
             res.status(400).send(e);
             //res.render(REGISTER, { error: "Cannot connect to db when creating this account."});
-        }	else{
+        } else {
             res.status(200).send('ok');
             //res.redirect('/');
         }

@@ -17,11 +17,11 @@ html
         script(type="text/javascript", src='http://code.jquery.com/jquery.js')
         script(type="text/javascript", src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
         script(type="text/javascript", src='../lib/pnsScript.js')
-    body
+    body(style="padding-top: 50px")
         if (error && error.length > 0)
             br
             h4.error-msg= error
             br
-    include ../nav
+        include ../nav
     block content
     block script

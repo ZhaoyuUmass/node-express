@@ -10,8 +10,8 @@
     "type": "git",
     "url": "git@github.com:mjhea0/passport-local-express4.git"
   },
-  "author": "Michael Herman <michael@mherman.org>",
-  "license": "MIT",
+  "author": "Zhaoyu Gao",
+  "license": "UMASS",
   "dependencies": {
     "body-parser": "1.14.1",
     "connect-mongo": "0.8.2",
