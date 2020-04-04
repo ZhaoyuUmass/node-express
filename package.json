@@ -13,25 +13,22 @@
   "author": "Zhaoyu Gao",
   "license": "UMASS",
   "dependencies": {
-    "body-parser": "1.14.1",
-    "connect-mongo": "0.8.2",
-    "cookie-parser": "1.4.0",
-    "emailjs": "^1.0.4",
-    "errorhandler": "1.4.2",
-    "express": "4.13.3",
-    "express-session": "1.11.3",
-    "jade": "1.11.0",
-    "moment": "2.10.3",
-    "mongodb": "2.0.45",
-    "stylus": "0.52.4",
-
+    "body-parser": "^1.19.0",
     "chai": "~1.8.1",
     "connect-flash": "^0.1.1",
-    "debug": "^2.1.1",
+    "connect-mongo": "0.8.2",
+    "cookie-parser": "1.4.0",
+    "debug": "^2.6.9",
+    "emailjs": "^1.0.4",
+    "errorhandler": "^1.5.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "jade": "1.11.0",
     "mocha": "~1.14.0",
-    "morgan": "^1.5.1",
-    "serve-favicon": "^2.2.0",
-    "should": "~2.1.0"
-
+    "mongodb": "2.0.45",
+    "morgan": "^1.10.0",
+    "serve-favicon": "^2.5.0",
+    "should": "~2.1.0",
+    "stylus": "^0.54.7"
   }
 }
