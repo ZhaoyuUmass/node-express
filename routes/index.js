@@ -47,9 +47,8 @@ router.get('/', function (req, res) {
                 var collection = db.collection(coll_name);
                 collection.find({user: username}).toArray(function(err, results) {
                     console.log("ERROR:"+err);
-                    console.log("DB:"+results);
+                    console.log("DB:"+JSON.stringify(results));
                     if(err){
-
                         res.render(ERROR, {
                             message: err.message,
                             error: err
@@ -62,7 +61,7 @@ router.get('/', function (req, res) {
                             cname = results[0].cname;
                         var fields = results[0].fields;
                         var json = {
-                            user: username,
+                            username: username,
                             code: code,
                             record: record,
                             mx: mx,
@@ -77,7 +76,7 @@ router.get('/', function (req, res) {
             }
         });
 
-        res.render(INDEX, user);
+        // res.render(INDEX, user);
     }else {
         res.render(INDEX, null);
     }
