@@ -69,7 +69,7 @@ router.get('/', function (req, res) {
                             cname: cname,
                             fields:fields
                         };
-                        res.render(INDEX, json);
+                        res.render(INDEX, user);
                     }
                 });
 
