@@ -47,6 +47,7 @@ router.get('/', function (req, res) {
             }else {
                 var collection = db.collection(coll_name);
                 collection.find({username: username}).toArray(function(err, results) {
+                    console.log("ERROR:"+err);
                     if(err){
                         res.render(ERROR, {
                             message: err.message,

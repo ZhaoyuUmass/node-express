@@ -52,7 +52,7 @@ app.use('/scheme', scheme);
 //passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
-mongoose.connect('mongodb://localhost/passport_local_mongoose_express4');
+mongoose.connect('mongodb://localhost/node-login');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
